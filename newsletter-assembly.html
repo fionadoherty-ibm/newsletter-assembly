@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBMer News — Newsletter Assembly</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: #161616;
+    color: #f4f4f4;
+    font-size: 14px;
+    line-height: 1.6;
+    padding-bottom: 80px;
+  }
+
+  .page-header {
+    background: #000;
+    border-bottom: 2px solid #0f62fe;
+    padding: 16px 24px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .page-header h1 { font-size: 16px; font-weight: 600; letter-spacing: .02em; color: #fff; }
+  .page-header p  { font-size: 12px; color: #a8a8a8; margin-top: 2px; }
+  .pub-date {
+    display: inline-block;
+    background: #0f62fe;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+
+  .main { max-width: 900px; margin: 0 auto; padding: 20px 16px 0; }
+
+  .newsletter-section {
+    margin-bottom: 20px;
+    border: 1px solid #393939;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .section-header {
+    background: #262626;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #393939;
+  }
+  .section-header h2 { font-size: 13px; font-weight: 600; color: #f4f4f4; flex: 1; }
+  .section-badge {
+    font-size: 10px; padding: 2px 7px; border-radius: 10px;
+    font-weight: 600; letter-spacing: .03em;
+  }
+  .badge-single { background: #6929c4; color: #fff; }
+  .badge-multi  { background: #393939; color: #c6c6c6; }
+  .story-count  { font-size: 11px; color: #a8a8a8; }
+
+  .drop-zone {
+    min-height: 60px;
+    padding: 8px;
+  }
+  .drop-zone.drag-over {
+    background: #1c3a5e;
+    outline: 2px dashed #0f62fe;
+    outline-offset: -2px;
+  }
+  .drop-zone.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #525252;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .story-card {
+    background: #262626;
+    border: 1px solid #393939;
+    border-radius: 3px;
+    padding: 12px 12px 10px 10px;
+    margin-bottom: 6px;
+    cursor: grab;
+    display: flex;
+    gap: 10px;
+    position: relative;
+    transition: border-color .15s;
+  }
+  .story-card:last-child { margin-bottom: 0; }
+  .story-card * { pointer-events: none; }
+  .story-card .abstract-toggle { pointer-events: auto; cursor: pointer; }
+  .story-card.dragging { opacity: .45; cursor: grabbing; }
+  .story-card:hover { border-color: #525252; }
+  .story-card.locked { cursor: default; }
+
+  .drag-handle {
+    color: #525252; font-size: 16px; cursor: grab;
+    user-select: none; flex-shrink: 0; padding-top: 2px;
+  }
+  .story-card.locked .drag-handle { cursor: default; color: #393939; }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-meta {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 5px; flex-wrap: wrap;
+  }
+  .source-label {
+    font-size: 10px; padding: 1px 6px; border-radius: 2px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+  }
+  .src-w3    { background: #042456; color: #78a9ff; }
+  .src-blog  { background: #1c4d3e; color: #42be65; }
+  .src-press { background: #3b2d4f; color: #be95ff; }
+  .src-other { background: #393939; color: #c6c6c6; }
+  .score-badge {
+    font-size: 10px; color: #a8a8a8;
+    border: 1px solid #393939; padding: 1px 6px; border-radius: 10px;
+  }
+  .img-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .img-found   { background: #24a148; }
+  .img-missing { background: #da1e28; }
+  .img-manual  { background: #f1c21b; }
+  .forced-hero-badge {
+    font-size: 10px; background: #f1c21b; color: #161616;
+    font-weight: 700; padding: 2px 7px; border-radius: 2px;
+  }
+  .card-title  { font-size: 13px; font-weight: 600; color: #f4f4f4; margin-bottom: 4px; line-height: 1.4; }
+  .card-abstract { font-size: 12px; color: #c6c6c6; line-height: 1.5; }
+  .abstract-full { display: none; }
+  .abstract-toggle {
+    color: #78a9ff; cursor: pointer; font-size: 11px;
+    margin-left: 4px; text-decoration: underline; text-underline-offset: 2px;
+  }
+  .card-cta {
+    display: inline-block; margin-top: 7px; font-size: 11px; font-weight: 600;
+    color: #78a9ff; background: #0e1e3a; padding: 3px 10px;
+    border-radius: 10px; border: 1px solid #0f62fe;
+  }
+
+  .validation-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #1c1c1c; border-top: 1px solid #393939;
+    padding: 10px 20px; display: flex; align-items: center;
+    gap: 16px; z-index: 200; flex-wrap: wrap;
+  }
+  .val-summary { display: flex; gap: 12px; flex: 1; flex-wrap: wrap; }
+  .val-item { font-size: 12px; display: flex; align-items: center; gap: 5px; }
+  .val-dot-red   { width: 8px; height: 8px; border-radius: 50%; background: #da1e28; flex-shrink:0; }
+  .val-dot-amber { width: 8px; height: 8px; border-radius: 50%; background: #f1c21b; flex-shrink:0; }
+  .val-dot-green { width: 8px; height: 8px; border-radius: 50%; background: #24a148; flex-shrink:0; }
+
+  .lock-btn {
+    background: #0f62fe; color: #fff; border: none;
+    padding: 9px 20px; font-size: 13px; font-weight: 600;
+    border-radius: 2px; cursor: pointer; white-space: nowrap; letter-spacing: .02em;
+  }
+  .lock-btn:disabled { background: #393939; color: #525252; cursor: not-allowed; }
+  .unlock-btn {
+    background: transparent; color: #78a9ff; border: 1px solid #78a9ff;
+    padding: 8px 18px; font-size: 13px; font-weight: 600;
+    border-radius: 2px; cursor: pointer; white-space: nowrap; display: none;
+  }
+  .lock-confirm { font-size: 12px; color: #24a148; font-weight: 600; display: none; }
+
+  .skipped-section { max-width: 900px; margin: 0 auto 20px; padding: 0 16px; }
+  .skipped-header {
+    font-size: 11px; font-weight: 600; color: #da1e28;
+    text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; padding-left: 4px;
+  }
+  .skipped-pill {
+    display: inline-block; background: #2d1b1b; border: 1px solid #da1e28;
+    color: #da1e28; font-size: 11px; padding: 3px 10px; border-radius: 10px; margin-right: 6px;
+  }
+
+  .assembly-notes {
+    max-width: 900px; margin: 0 auto 20px; padding: 0 16px;
+  }
+  .assembly-notes-inner {
+    background: #1c2a1c; border: 1px solid #24a148; border-radius: 4px;
+    font-size: 12px; color: #a7f0ba; line-height: 1.7; padding: 10px 14px 12px;
+  }
+  .assembly-notes-inner h3 {
+    font-size: 12px; font-weight: 700; color: #42be65;
+    margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em;
+  }
+  .assembly-notes-inner ul { padding-left: 18px; }
+  .assembly-notes-inner li { margin-bottom: 3px; }
+
+  .bob-output { display: none; max-width: 900px; margin: 10px auto; padding: 0 16px; }
+  .bob-output h3 {
+    font-size: 12px; font-weight: 700; color: #42be65;
+    margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em;
+  }
+  .bob-output pre {
+    background: #0d2d0d; border: 1px solid #24a148; border-radius: 3px;
+    padding: 14px; font-size: 11px; color: #a7f0ba;
+    white-space: pre-wrap; word-break: break-all;
+    overflow-x: auto; max-height: 320px; overflow-y: auto;
+  }
+
+  .page-footer {
+    text-align: center; font-size: 11px; color: #525252;
+    border-top: 1px solid #393939; padding: 14px 0 6px;
+    margin: 24px 16px 0; max-width: 900px;
+    margin-left: auto; margin-right: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>IBMer News — Newsletter Assembly</h1>
+  <p>Auto-placed draft · Drag stories to reorder or move between sections · Lock when ready</p>
+  <span class="pub-date">Publication Date: TBC</span>
+</div>
+
+<div class="main" id="main"></div>
+
+<div class="skipped-section" id="skipped-section" style="display:none;">
+  <div class="skipped-header">Skipped (not approved)</div>
+  <div id="skipped-pills"></div>
+</div>
+
+<div class="assembly-notes">
+  <div class="assembly-notes-inner">
+    <h3>Assembly Notes</h3>
+    <ul>
+      <li><strong>Hero → S001</strong> — Golden Circle matches Tier 2 (top-tier award recognition). No story reaches the 25-point threshold so <em>forced_hero: true</em> is set.</li>
+      <li><strong>CEO → S002</strong> — Title contains "CEO", "Office Hours", and "Arvind". CEO Office Hours replay is the highest-priority CEO content type.</li>
+      <li><strong>Forced Hero warning active</strong> — S001 scored 10; amber badge is shown on the card.</li>
+      <li><strong>Empty sections</strong> — Featured Stories and Latest Updates have no stories this issue.</li>
+      <li><strong>Skipped</strong> — S006 "Q2 internal operations update" excluded (approved: false; abstract flagged as too vague).</li>
+    </ul>
+  </div>
+</div>
+
+<div class="bob-output" id="bob-output">
+  <h3>Locked Draft JSON — ready for Task 6 (Subject Line Generator)</h3>
+  <pre id="output-json"></pre>
+</div>
+
+<div class="validation-bar">
+  <div class="val-summary" id="val-summary"></div>
+  <span class="lock-confirm" id="lock-confirm">&#10003; Newsletter locked. Bob is generating subject line options.</span>
+  <button class="unlock-btn" id="unlock-btn">Unlock to edit</button>
+  <button class="lock-btn" id="lock-btn">Lock Newsletter</button>
+</div>
+
+<div class="page-footer">Made with IBM Bob</div>
+
+<script>
+const DRAFT = {
+  publication_date: "TBC",
+  headline: "IBMer News This Week. The news you need to know.",
+  ceo_slot_empty: false,
+  skipped_stories: ["S006"],
+  sections: [
+    {
+      section_name: "Hero", single_slot: true,
+      stories: [{
+        story_id: "S001",
+        final_title: "Congratulations to our IBM Golden Circle invitees!",
+        final_abstract: "This year's Golden Circle honourees represent the best of IBM — top performers who have gone above and beyond for clients and colleagues. See if a colleague you know made the list.",
+        final_cta: "Celebrate our colleagues",
+        source_type: "w3", suggested_category: "In the News",
+        editorial_score: 10, forced_hero: true,
+        requires_image: true, image_url: "https://w3.ibm.com/golden-circle-2026/hero.jpg",
+        image_status: "found", flags: [], order: 1
+      }]
+    },
+    {
+      section_name: "CEO", single_slot: true,
+      stories: [{
+        story_id: "S002",
+        final_title: "CEO Office Hours replay: watch Arvind's latest update",
+        final_abstract: "Missed this week's CEO Office Hours? Catch the full replay to hear Arvind's perspective on IBM's AI strategy, client momentum, and what's ahead for the rest of the year.",
+        final_cta: "Watch the replay",
+        source_type: "w3", suggested_category: "Featured Stories",
+        editorial_score: 14, forced_hero: false,
+        requires_image: false, image_url: null,
+        image_status: "not found", flags: [], order: 1
+      }]
+    },
+    {
+      section_name: "In the News", single_slot: false,
+      stories: [{
+        story_id: "S003",
+        final_title: "Register now for Think 2026 — deadline this Friday",
+        final_abstract: "Think 2026 is IBM's flagship conference and your chance to connect with clients, partners, and colleagues from across the company. Early-bird registration closes this Friday — don't miss your spot.",
+        final_cta: "Register now",
+        source_type: "w3", suggested_category: "In the News",
+        editorial_score: 19, forced_hero: false,
+        requires_image: true, image_url: "/dam/think-2026/think-banner.jpg",
+        image_status: "found", flags: [], order: 1
+      }]
+    },
+    { section_name: "Featured Stories", single_slot: false, stories: [] },
+    {
+      section_name: "Strategy Spotlight", single_slot: false,
+      stories: [{
+        story_id: "S004",
+        final_title: "How watsonx is transforming client operations at scale",
+        final_abstract: "Three clients share how IBM watsonx has helped them automate workflows, cut costs, and accelerate decision-making. Real results, real impact.",
+        final_cta: "Read the stories",
+        source_type: "blog", suggested_category: "Strategy Spotlight",
+        editorial_score: 17, forced_hero: false,
+        requires_image: false, image_url: null,
+        image_status: "not found", flags: [], order: 1
+      }]
+    },
+    { section_name: "Latest Updates", single_slot: false, stories: [] },
+    {
+      section_name: "Around IBM", single_slot: false,
+      stories: [{
+        story_id: "S005",
+        final_title: "IBM Week of Impact is coming — here's how to get involved",
+        final_abstract: "IBM Week of Impact kicks off next month. Find volunteering opportunities near you, sign up for virtual events, and make a difference in your community.",
+        final_cta: "Find opportunities",
+        source_type: "w3", suggested_category: "Around IBM",
+        editorial_score: 3, forced_hero: false,
+        requires_image: true, image_url: null,
+        image_status: "needs manual sourcing", flags: [], order: 1
+      }]
+    },
+    {
+      section_name: "Just for #fun", single_slot: false,
+      stories: [{
+        story_id: "S007",
+        final_title: "18 across: maker of the world's largest quantum computer?",
+        final_abstract: "This week's fun fact: IBM holds the record for the world's largest quantum computer. How many qubits? Find out inside.",
+        final_cta: "Get the answer",
+        source_type: "other", suggested_category: "Just for #fun",
+        editorial_score: 2, forced_hero: false,
+        requires_image: false, image_url: null,
+        image_status: "not found", flags: [], order: 1
+      }]
+    }
+  ]
+};
+
+const SKIPPED = [
+  { story_id: "S006", final_title: "Q2 internal operations update", reason: "approved: false — abstract too vague" }
+];
+
+let sections = DRAFT.sections.map(s => ({ ...s, stories: s.stories.map(st => ({ ...st })) }));
+let locked = false;
+let dragSrc = null;
+
+function render() {
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  sections.forEach((sec, sIdx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'newsletter-section';
+    wrap.innerHTML = `
+      <div class="section-header">
+        <h2>${sec.section_name}</h2>
+        <span class="section-badge ${sec.single_slot ? 'badge-single' : 'badge-multi'}">${sec.single_slot ? 'Single slot' : 'Multi-story'}</span>
+        <span class="story-count">${sec.stories.length} stor${sec.stories.length !== 1 ? 'ies' : 'y'}</span>
+      </div>`;
+    const dz = document.createElement('div');
+    dz.className = 'drop-zone' + (sec.stories.length === 0 ? ' empty' : '');
+    dz.dataset.section = sIdx;
+    if (sec.stories.length === 0) dz.textContent = 'Drag a story here';
+    sec.stories.forEach((story, stIdx) => dz.appendChild(buildCard(story, sIdx, stIdx)));
+    wrap.appendChild(dz);
+    main.appendChild(wrap);
+  });
+  renderSkipped();
+  validate();
+}
+
+function buildCard(story, sIdx, stIdx) {
+  const card = document.createElement('div');
+  card.className = 'story-card' + (locked ? ' locked' : '');
+  card.setAttribute('draggable', String(!locked));
+  card.dataset.section = sIdx;
+  card.dataset.story = stIdx;
+  const srcClass = { w3: 'src-w3', blog: 'src-blog', 'press release': 'src-press', other: 'src-other' }[story.source_type] || 'src-other';
+  const imgClass = { found: 'img-found', 'not found': 'img-missing', 'needs manual sourcing': 'img-manual' }[story.image_status] || 'img-missing';
+  const imgTitle = { found: 'Image confirmed', 'not found': 'Image missing', 'needs manual sourcing': 'Needs manual sourcing' }[story.image_status] || '';
+  const abstract = story.final_abstract;
+  const short = abstract.length > 120 ? abstract.slice(0, 120) + '…' : abstract;
+  const needsToggle = abstract.length > 120;
+  const forcedBadge = story.forced_hero ? `<span class="forced-hero-badge">FORCED HERO</span>` : '';
+  card.innerHTML = `
+    <span class="drag-handle" title="Drag to reorder">&#x2630;</span>
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="source-label ${srcClass}">${story.source_type}</span>
+        <span class="score-badge">Score: ${story.editorial_score}</span>
+        <span class="img-dot ${imgClass}" title="${imgTitle}"></span>
+        ${forcedBadge}
+      </div>
+      <div class="card-title">${story.final_title}</div>
+      <div class="card-abstract">
+        <span class="abstract-short" id="short-${story.story_id}">${short}</span>
+        <span class="abstract-full" id="full-${story.story_id}">${abstract}</span>
+        ${needsToggle ? `<span class="abstract-toggle" id="toggle-${story.story_id}">Show more</span>` : ''}
+      </div>
+      <span class="card-cta">${story.final_cta}</span>
+    </div>`;
+  if (!locked) {
+    card.addEventListener('dragstart', e => {
+      dragSrc = { sectionIdx: sIdx, storyIdx: stIdx };
+      setTimeout(() => card.classList.add('dragging'), 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => { card.classList.remove('dragging'); dragSrc = null; });
+  }
+  if (needsToggle) {
+    setTimeout(() => {
+      const toggle = document.getElementById('toggle-' + story.story_id);
+      if (!toggle) return;
+      toggle.addEventListener('click', () => {
+        const s = document.getElementById('short-' + story.story_id);
+        const f = document.getElementById('full-' + story.story_id);
+        const expanded = f.style.display === 'inline';
+        s.style.display = expanded ? 'inline' : 'none';
+        f.style.display = expanded ? 'none' : 'inline';
+        toggle.textContent = expanded ? 'Show more' : 'Show less';
+      });
+    }, 0);
+  }
+  return card;
+}
+
+// Single document-level dragover + drop — fires exactly once per user action
+document.addEventListener('dragover', e => {
+  if (locked) return;
+  e.preventDefault();
+  // highlight the nearest drop-zone
+  document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+  const dz = e.target.closest('[data-section]');
+  if (dz) dz.closest('.drop-zone, [data-section]').classList && e.target.closest('.drop-zone') && e.target.closest('.drop-zone').classList.add('drag-over');
+});
+
+document.addEventListener('drop', e => {
+  if (locked || !dragSrc) return;
+  e.preventDefault();
+  document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+
+  // Find the nearest card or drop-zone
+  const card = e.target.closest('.story-card');
+  const zone = e.target.closest('.drop-zone');
+
+  let targetSectionIdx, targetStoryIdx;
+  if (card) {
+    targetSectionIdx = parseInt(card.dataset.section, 10);
+    targetStoryIdx   = parseInt(card.dataset.story,   10);
+  } else if (zone) {
+    targetSectionIdx = parseInt(zone.dataset.section, 10);
+    targetStoryIdx   = null;
+  } else {
+    return;
+  }
+
+  const src = dragSrc;
+  dragSrc = null;
+  if (src.sectionIdx === targetSectionIdx && src.storyIdx === targetStoryIdx) return;
+
+  const srcSec = sections[src.sectionIdx];
+  const tgtSec = sections[targetSectionIdx];
+
+  if (tgtSec.single_slot && tgtSec.stories.length >= 1 && src.sectionIdx !== targetSectionIdx) {
+    const occupant = tgtSec.stories[0];
+    const ok = confirm(`"${tgtSec.section_name}" already has a story (${occupant.story_id}: "${occupant.final_title}").\n\nReplace it? The current story will move back to its original section.`);
+    if (!ok) return;
+  }
+
+  const [movedStory] = srcSec.stories.splice(src.storyIdx, 1);
+  if (tgtSec.single_slot && tgtSec.stories.length >= 1 && src.sectionIdx !== targetSectionIdx) {
+    const displaced = tgtSec.stories.splice(0, 1)[0];
+    const returnSec = sections.find(s => s.section_name === displaced.suggested_category)
+                   || sections.find(s => s.section_name === 'In the News');
+    returnSec.stories.push(displaced);
+  }
+  if (targetStoryIdx === null || targetStoryIdx >= tgtSec.stories.length) {
+    tgtSec.stories.push(movedStory);
+  } else {
+    tgtSec.stories.splice(targetStoryIdx, 0, movedStory);
+  }
+  console.log('sections after drop:', sections.map(s => s.section_name + ': ' + s.stories.map(st => st.story_id).join(',')));
+  render();
+});
+
+function validate() {
+  const warnings = [];
+  let blocking = false;
+  const heroSec = sections.find(s => s.section_name === 'Hero');
+  const ceoSec  = sections.find(s => s.section_name === 'CEO');
+  if (!heroSec || heroSec.stories.length === 0) { warnings.push({ level: 'red', text: 'Hero slot is empty — required' }); blocking = true; }
+  if (!ceoSec  || ceoSec.stories.length === 0)  { warnings.push({ level: 'red', text: 'CEO slot is empty — required' });  blocking = true; }
+  ['Hero','CEO','Around IBM','Just for #fun'].forEach(name => {
+    const sec = sections.find(s => s.section_name === name);
+    if (sec) sec.stories.forEach(st => {
+      if (st.requires_image && st.image_status !== 'found')
+        warnings.push({ level: 'red', text: name + ' — ' + st.story_id + ' needs image (' + st.image_status + ')' });
+    });
+  });
+  if (heroSec && heroSec.stories.some(s => s.forced_hero))
+    warnings.push({ level: 'amber', text: 'Forced Hero promotion active (score below 25 threshold)' });
+  sections.forEach(sec => sec.stories.forEach(st => {
+    if (st.image_status === 'needs manual sourcing')
+      warnings.push({ level: 'amber', text: st.story_id + ' — image needs manual sourcing' });
+  }));
+  if (warnings.length === 0) warnings.push({ level: 'green', text: 'All checks passed — ready to lock' });
+  document.getElementById('val-summary').innerHTML = warnings.map(w =>
+    `<span class="val-item"><span class="val-dot-${w.level}"></span><span>${w.text}</span></span>`
+  ).join('');
+  const lockBtn = document.getElementById('lock-btn');
+  lockBtn.disabled = blocking || locked;
+}
+
+document.getElementById('lock-btn').addEventListener('click', () => {
+  if (locked) return;
+  locked = true;
+  const finalDraft = {
+    publication_date: DRAFT.publication_date,
+    headline: DRAFT.headline,
+    ceo_slot_empty: sections.find(s => s.section_name === 'CEO').stories.length === 0,
+    skipped_stories: DRAFT.skipped_stories,
+    sections: sections.map(sec => ({
+      section_name: sec.section_name,
+      single_slot: sec.single_slot,
+      stories: sec.stories.map((st, i) => ({ ...st, order: i + 1 }))
+    }))
+  };
+  try { window.parent.postMessage({ type: 'NEWSLETTER_LOCKED', payload: finalDraft }, '*'); } catch(e) {}
+  document.getElementById('output-json').textContent = JSON.stringify(finalDraft, null, 2);
+  document.getElementById('bob-output').style.display = 'block';
+  document.getElementById('lock-btn').style.display = 'none';
+  document.getElementById('lock-confirm').style.display = 'inline';
+  document.getElementById('unlock-btn').style.display = 'inline-block';
+  render();
+  validate();
+});
+
+document.getElementById('unlock-btn').addEventListener('click', () => {
+  locked = false;
+  document.getElementById('lock-btn').style.display = 'inline-block';
+  document.getElementById('lock-btn').disabled = false;
+  document.getElementById('lock-confirm').style.display = 'none';
+  document.getElementById('unlock-btn').style.display = 'none';
+  document.getElementById('bob-output').style.display = 'none';
+  render();
+});
+
+function renderSkipped() {
+  if (!SKIPPED.length) return;
+  document.getElementById('skipped-section').style.display = 'block';
+  document.getElementById('skipped-pills').innerHTML = SKIPPED.map(s =>
+    `<span class="skipped-pill" title="${s.reason}">${s.story_id}: ${s.final_title}</span>`
+  ).join('');
+}
+
+render();
+</script>
+</body>
+</html>
