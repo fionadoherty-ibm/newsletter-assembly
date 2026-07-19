@@ -1,5 +1,7 @@
 # IBMer News — Newsletter Assembly
 
+**[▶ Open the live tool](https://fionadoherty-ibm.github.io/newsletter-assembly/)**
+
 A browser-based tool for assembling and reviewing the IBMer News weekly newsletter before it goes to production.
 
 ## What it does
