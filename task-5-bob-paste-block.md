@@ -14,7 +14,7 @@ Fixed slots (every issue): Hero (top/lead story) · CEO slot · "In the news thi
 
 Recurring optional slots: "The latest updates" (compliance/IT deadlines) · "Around IBM" (community/culture) · "Spotlight" (deep technical feature) · "Think ahead" / event promo · "Smarter business in action" (client win)
 
-Footer (always): Contact/Slack link · past newsletters · privacy policy · subscription centre
+Footer (always): Contact/Slack link · past newsletters · privacy policy · subscription center
 
 Hero Slot — What earns the top position
 
@@ -88,7 +88,7 @@ SCORING RULES
 
 Calculate an editorial score for each story. Add points for every criterion that applies:
 
-- Title or abstract mentions recognition, award, congratulations, honour, or celebrates colleagues: +10
+- Title or abstract mentions recognition, award, congratulations, honor, or celebrates colleagues: +10
 - Title or abstract contains CEO: +8
 - Title or abstract contains explicit deadline language with a specific date or day (e.g. "deadline this Friday", "closes [date]", "last chance", "ends Friday") — do NOT award for vague future language like "what's ahead" or "coming soon": +7
 - Title or abstract mentions Think conference: +7
@@ -186,7 +186,7 @@ EDITORIAL_REVIEW_REPORTS:
     "story_id": "S001",
     "approved": true,
     "final_title": "Congratulations to our IBM Golden Circle invitees!",
-    "final_abstract": "This year's Golden Circle honourees represent the best of IBM — top performers who have gone above and beyond for clients and colleagues. See if a colleague you know made the list.",
+    "final_abstract": "This year's Golden Circle honorees represent the best of IBM — top performers who have gone above and beyond for clients and colleagues. See if a colleague you know made the list.",
     "final_cta": "Celebrate our colleagues",
     "suggested_category": "In the News",
     "source_type": "w3",

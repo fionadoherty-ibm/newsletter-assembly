@@ -109,7 +109,7 @@ Build the interactive HTML artifact that renders all auto-placed stories in thei
 6. Implement cross-section movement (drag from any section to any other section)
 7. Implement the Hero/CEO single-slot displacement rule: when a card is dropped on a full single-slot section, the previously occupying card is moved to its `suggested_category` section
 8. Implement the Lock button enabled/disabled state (requires Hero and CEO each to have exactly 1 story)
-9. Apply IBM-aligned visual styling (dark background `#161616`, IBM Plex Sans font, Carbon Design System colour tokens for badges and indicators where feasible within a self-contained artifact)
+9. Apply IBM-aligned visual styling (dark background `#161616`, IBM Plex Sans font, Carbon Design System color tokens for badges and indicators where feasible within a self-contained artifact)
 10. Test the artifact with a representative set of sample stories across all 8 sections
 
 **Relevant Context:**
