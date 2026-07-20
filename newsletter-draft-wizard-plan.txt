@@ -1,0 +1,334 @@
+NEWSLETTER DRAFT WIZARD — PLANNING DOCUMENT
+============================================
+Last updated: June 2025
+
+
+OVERVIEW
+--------
+The weekly IBMer newsletter process is manual and time consuming. This tool — built
+in IBM Bob — helps the team produce a high-quality, engaging newsletter faster and
+with more consistency. Bob supports the work. Editors own the story.
+
+Success means:
+  - Stories are submitted in a consistent format every time
+  - Titles, abstracts and CTAs are automatically generated and aligned to guidelines
+  - Content follows smart brevity and Neverland principles
+  - The newsletter structure is easy to assemble
+  - Story placement and prioritization are easy to manage and shift
+  - Editors spend less time rewriting and more time refining
+
+
+CONSTRAINTS
+-----------
+  - Must follow existing newsletter format and structure
+  - Must align to editorial guidelines (smart brevity, tone, clarity, no jargon)
+  - Must keep humans in the loop for review and approvals
+  - Content comes from multiple sources (Box, OneDrive)
+  - Not all stories include images in the newsletter
+  - The structure must stay consistent week to week
+  - Tool should work for nontechnical users
+  - Output must be usable for future export to Marketo
+  - w3 stories have a variety of topics, length and format
+
+
+CURRENT NEWSLETTER PRODUCTION PROCESS
+--------------------------------------
+Prior week:
+  - Box note wireframe sent to CorpComms team
+  - Story owners identify content they plan to submit
+
+Content submission (due Wednesday 9:00 a.m.):
+  - Story owners submit:
+      - Engaging story title
+      - Story abstract (~500-700 characters)
+      - Fun, action-oriented CTA (2-4 words)
+
+Editorial review (Wednesday ~11:00 a.m.):
+  - Team reviews all stories on Teams call
+  - Discusses relevance, priority, placement and edits
+  - Identifies content gaps or missing assets
+  - All edits made ASAP after call
+
+Newsletter structure:
+  - Publication date (Month Day, Year)
+  - "IBMer News This Week. The news you need to know."
+  - Hero image with title, abstract and CTA
+  - "From the CEO" section with photo, abstract and CTA
+  - Remaining sections (vary by week):
+      - In the News
+      - Featured Stories
+      - Strategy Spotlight
+      - Latest Updates
+  - Always ends with a lighter culture section:
+      - Around IBM
+      - Just for #fun
+      - Occasional event-specific topics
+  - Stories arranged by category and business priority
+  - Sections that always require a visual:
+      - Hero story
+      - CEO feature
+      - Bottom culture/fun section
+  - Images or GIFs sourced from story webpage or DAM
+
+Marketo build and review:
+  - Chris (or team member with Marketo access) builds newsletter in Marketo
+  - Preview sent to team mid-afternoon Wednesday
+  - Team reviews for formatting, content, spelling, grammar, broken links, image placement
+
+Leadership review:
+  - Newsletter shared with leadership after team edits
+  - Final approval from Jonathan Adisak (Wednesday evening or Thursday morning)
+
+Distribution:
+  - Newsletter distributed Thursday, typically mid to late afternoon
+
+
+GUIDING PRINCIPLE
+-----------------
+Bob supports the work. Editors own the story.
+
+Where humans stay involved:
+  - Content submission: story owners decide what is important, provide raw inputs
+  - Editorial review: team reviews all stories together, makes final decisions on
+    relevance, priority, placement and messaging. Bob suggests, editors approve.
+  - Final approval: editors confirm structure, flow and accuracy before publishing
+
+
+RESOURCES
+---------
+  - Neverland: https://ibm.biz/neverland
+  - Smart brevity principles (by VandeHei and Allen): PDF
+  - IBM Design Language: https://www.ibm.com/design/language/
+  - The IBM Style Guide: https://ibm.biz/style-guide
+  - Ragan's no jargon guide: https://ibm.biz/no-jargon
+  - Sample top-performing newsletters (x2)
+  - Newsletter guidance document and latest template: https://ibm.box.com/s/pzn0kbdg8808pp6kwkoea9d6xdrac8o5
+  - Sample w3 stories (PDFs) — variety of news, explainer, glossary formats
+  - Chris' subject line generator prompt
+  - CEO editorial style guidelines
+
+Existing agents for reference:
+  - Khushi's editorial Copilot agent
+  - Noel's newsletter Copilot agent
+  - Macy's bad cop Copilot agent
+
+
+HOW THE TEAM WORKS INDEPENDENTLY
+----------------------------------
+Each person works in their own Bob playground folder on their laptop, scoped to
+their assigned task. Outputs are combined into a single shared workspace at the end.
+
+Each person's playground should contain:
+  - This plan document (read-only reference)
+  - Their task's sample inputs (e.g. sample w3 story PDFs, newsletter guidance doc)
+  - Their task's prompt(s) built and tested in Bob
+  - A sample output file showing what their task produces
+
+The input/output contracts below define the handoff format between tasks so that
+no one is blocked waiting for another task to be fully built. Tasks 2, 3, and 4
+can all begin in parallel as soon as Task 1 defines its output format.
+
+
+THE SIX TASKS
+=============
+
+TASK 1 — CONTENT INGESTION AND STORY INTAKE
+--------------------------------------------
+Goal:
+  Accept raw story submissions from Box, OneDrive, or direct paste. Normalize them
+  into a consistent structured format that every downstream task can reliably consume.
+
+Input:
+  - Pasted text from story owner, OR
+  - PDF from Box or OneDrive, OR
+  - URL to a w3 story page
+
+Output — Structured Story Object:
+  {
+    "story_id":           unique identifier,
+    "source_url":         https://...,
+    "raw_title":          original title as submitted,
+    "raw_body":           full story text,
+    "submitted_by":       story owner name,
+    "suggested_category": In the News | Featured Stories | Strategy Spotlight |
+                          Latest Updates | Around IBM | Just for #fun,
+    "requires_image":     true | false,
+    "source_type":        w3 | press release | blog | other
+  }
+
+Status: [ ] pending
+
+
+TASK 2 — TITLE, ABSTRACT AND CTA GENERATOR
+--------------------------------------------
+Goal:
+  Take a normalized story and auto-generate a newsletter-ready title, abstract
+  (~500-700 characters), and a 2-4 word action-oriented CTA aligned to editorial
+  voice and tone.
+
+Input:
+  - Structured Story Object from Task 1
+
+Output — Generated Content Block:
+  {
+    "story_id":           matches Task 1,
+    "generated_title":    newsletter-ready headline,
+    "generated_abstract": 500-700 character summary,
+    "generated_cta":      2-4 word action phrase,
+    "word_count":         000,
+    "character_count":    000
+  }
+
+Status: [ ] pending
+
+
+TASK 3 — EDITORIAL RULES ENGINE
+---------------------------------
+Goal:
+  The "bad cop" quality check. Validate generated or submitted copy against smart
+  brevity, Neverland, no-jargon, and IBM style rules. Return flagged issues with
+  suggested corrections for editor review.
+
+Input:
+  - Generated Content Block from Task 2
+
+Output — Editorial Review Report:
+  {
+    "story_id":  matches Task 2,
+    "approved":  true | false,
+    "flags": [
+      {
+        "field":         generated_title | generated_abstract | generated_cta,
+        "issue":         description of the problem,
+        "rule_violated": smart brevity | no jargon | neverland | IBM style,
+        "suggestion":    corrected or improved version
+      }
+    ],
+    "final_title":    approved or editor-revised title,
+    "final_abstract": approved or editor-revised abstract,
+    "final_cta":      approved or editor-revised CTA
+  }
+
+Status: [ ] pending
+
+
+TASK 4 — IMAGE RECOMMENDATION
+-------------------------------
+Goal:
+  For the three sections that always require a visual (Hero, CEO, culture/fun),
+  surface image candidates from the story's web page or DAM. Flag any stories still
+  missing assets before assembly begins.
+
+Input:
+  - Structured Story Object from Task 1
+
+Output — Image Recommendation Block:
+  {
+    "story_id":       matches Task 1,
+    "requires_image": true | false,
+    "recommended_sources": [
+      {
+        "source_type":   story webpage | DAM,
+        "url_or_path":   https://... or DAM asset path,
+        "description":   brief description of the image
+      }
+    ],
+    "image_status":   found | not found | needs manual sourcing
+  }
+
+Status: [ ] pending
+
+
+TASK 5 — NEWSLETTER ASSEMBLY AND STORY ORDERING
+-------------------------------------------------
+Goal:
+  Arrange all processed stories into the correct newsletter sections in the right
+  sequence. Allow editors to reorder and reprioritize before the output is locked.
+
+Input:
+  - Editorial Review Reports from Task 3 (all stories, approved)
+  - Image Recommendation Blocks from Task 4
+
+Output — Assembled Newsletter Draft:
+  {
+    "publication_date": Month Day, Year,
+    "headline": "IBMer News This Week. The news you need to know.",
+    "sections": [
+      {
+        "section_name": Hero | CEO | In the News | Featured Stories |
+                        Strategy Spotlight | Latest Updates |
+                        Around IBM | Just for #fun,
+        "stories": [
+          {
+            "story_id":       ...,
+            "final_title":    ...,
+            "final_abstract": ...,
+            "final_cta":      ...,
+            "image":          url or DAM path | none,
+            "order":          1
+          }
+        ]
+      }
+    ]
+  }
+
+Status: [ ] pending
+
+
+TASK 6 — SUBJECT LINE GENERATOR
+---------------------------------
+Goal:
+  Once the newsletter is assembled, generate candidate email subject lines for the
+  distribution send. Subject lines should be punchy, curiosity-driving, and aligned
+  to the week's lead stories so the team has options to choose from rather than
+  writing from scratch.
+
+Input:
+  - Assembled Newsletter Draft from Task 5
+
+Output — Subject Line Options:
+  {
+    "publication_date": Month Day, Year,
+    "subject_line_options": [
+      {
+        "option":       1,
+        "subject_line": ...,
+        "style":        curiosity | urgency | direct | playful
+      },
+      {
+        "option":       2,
+        "subject_line": ...,
+        "style":        ...
+      },
+      {
+        "option":       3,
+        "subject_line": ...,
+        "style":        ...
+      }
+    ],
+    "recommended": 1
+  }
+
+Status: [ ] pending
+
+
+HANDOFF CHAIN
+=============
+
+  Task 1  -->  Task 2    Structured Story Object
+  Task 1  -->  Task 4    Structured Story Object
+  Task 2  -->  Task 3    Generated Content Block
+  Task 3  -->  Task 5    Editorial Review Report
+  Task 4  -->  Task 5    Image Recommendation Block
+  Task 5  -->  Task 6    Assembled Newsletter Draft
+
+Tasks 2, 3, and 4 can begin in parallel as soon as Task 1 defines its output format.
+Tasks 5 and 6 require all upstream tasks to be complete before combining.
+
+
+FUTURE GOAL (NOT IN SCOPE FOR INITIAL BUILD)
+---------------------------------------------
+  - Marketo export prep: structure the final assembled newsletter into a
+    Marketo-ready format with correct field mapping, image placement, links,
+    and section order so the Marketo build step requires minimal manual work.
+
