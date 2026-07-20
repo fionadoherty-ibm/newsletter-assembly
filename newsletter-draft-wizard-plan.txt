@@ -309,7 +309,7 @@ Output — Subject Line Options:
     "recommended": 1
   }
 
-Status: [x] done — see task-6-subject-line-prompt.md, task-6-bob-paste-block.md
+Status: [ ] pending — colleague building this task separately
 
 
 HANDOFF CHAIN
