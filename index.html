@@ -6,105 +6,59 @@
 <title>IBMer News — Newsletter Assembly</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: -apple-system, "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    background: #f4f4f4;
-    color: #161616;
-    padding-bottom: 80px;
-  }
+  body { font-family: -apple-system, "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #f4f4f4; color: #161616; padding-bottom: 80px; }
 
   /* ── Header ─────────────────────────────────────────────── */
-  .page-header {
-    background: #ffffff;
-    color: #161616;
-    padding: 20px 24px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 2px solid #0f62fe;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  }
-  .page-header .eyebrow {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #0f62fe;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
+  .page-header { background: #ffffff; padding: 20px 24px 16px; position: sticky; top: 0; z-index: 100; border-bottom: 2px solid #0f62fe; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .page-header .eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #0f62fe; font-weight: 600; margin-bottom: 4px; }
   .page-header h1 { font-size: 18px; font-weight: 600; color: #161616; }
   .page-header .pub-date { font-size: 13px; color: #525252; margin-top: 2px; }
 
   /* ── Main ────────────────────────────────────────────────── */
   .main { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
 
-  /* ── Section ─────────────────────────────────────────────── */
-  .section-block {
-    margin-bottom: 20px;
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  /* ── Section block ───────────────────────────────────────── */
+  .section-block { margin-bottom: 20px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .section-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f4f4f4; border-bottom: 1px solid #e0e0e0; border-radius: 4px 4px 0 0; }
+  .section-name-fixed { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #161616; flex: 1; }
+  /* Editable section title */
+  .section-name-input {
+    flex: 1; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    color: #161616; border: none; background: transparent; outline: none;
+    border-bottom: 1px dashed #c6c6c6; padding: 1px 2px; min-width: 80px;
   }
-  .section-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 16px;
-    background: #f4f4f4;
-    border-bottom: 1px solid #e0e0e0;
-    border-radius: 4px 4px 0 0;
-  }
-  .section-name {
-    font-size: 13px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.06em; color: #161616;
-  }
-  .section-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+  .section-name-input:focus { border-bottom-color: #0f62fe; background: #edf5ff; border-radius: 2px 2px 0 0; }
+  .section-name-input::placeholder { color: #a8a8a8; font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .section-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; white-space: nowrap; }
   .badge-single { background: #d0e2ff; color: #0043ce; }
   .badge-multi  { background: #e8daff; color: #6929c4; }
+  .badge-dynamic { background: #e0e0e0; color: #525252; }
+  /* Remove section button */
+  .btn-remove-section {
+    background: none; border: none; cursor: pointer; color: #a8a8a8;
+    font-size: 16px; line-height: 1; padding: 2px 4px; border-radius: 2px; flex-shrink: 0;
+  }
+  .btn-remove-section:hover { color: #da1e28; background: #fff1f1; }
+  body.locked .btn-remove-section { display: none; }
 
+  /* ── Drop zone ───────────────────────────────────────────── */
   .story-list { padding: 8px; min-height: 60px; transition: background 0.15s; }
-  .story-list.drag-over {
-    background: #edf5ff;
-    outline: 2px dashed #0f62fe;
-    outline-offset: -2px;
-    border-radius: 2px;
-  }
-
-  .empty-zone {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 60px;
-    border: 1px dashed #c6c6c6; border-radius: 3px; margin: 6px;
-    color: #a8a8a8; font-size: 13px; font-style: italic;
-  }
+  .story-list.drag-over { background: #edf5ff; outline: 2px dashed #0f62fe; outline-offset: -2px; border-radius: 2px; }
+  .empty-zone { display: flex; align-items: center; justify-content: center; min-height: 60px; border: 1px dashed #c6c6c6; border-radius: 3px; margin: 6px; color: #a8a8a8; font-size: 13px; font-style: italic; }
   .empty-zone.drag-over { background: #edf5ff; border-color: #0f62fe; color: #0f62fe; }
 
   /* ── Story card ──────────────────────────────────────────── */
-  .story-card {
-    display: flex; align-items: flex-start; gap: 10px;
-    background: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px;
-    padding: 12px 12px 10px; margin-bottom: 6px;
-    cursor: grab; user-select: none;
-    transition: box-shadow 0.15s, border-color 0.15s;
-  }
+  .story-card { display: flex; align-items: flex-start; gap: 10px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px; padding: 12px 12px 10px; margin-bottom: 6px; cursor: grab; user-select: none; transition: box-shadow 0.15s, border-color 0.15s; }
   .story-card:last-child { margin-bottom: 0; }
   .story-card:hover { border-color: #0f62fe; box-shadow: 0 2px 8px rgba(15,98,254,0.10); }
   .story-card.dragging { opacity: 0.4; cursor: grabbing; }
   .story-card.drag-target { border-top: 3px solid #0f62fe; }
-
   .drag-handle { flex-shrink: 0; display: flex; flex-direction: column; gap: 3px; padding-top: 4px; cursor: grab; }
   .drag-handle span { display: block; width: 16px; height: 2px; background: #c6c6c6; border-radius: 1px; }
   .story-card:hover .drag-handle span { background: #0f62fe; }
-
   .card-body { flex: 1; min-width: 0; }
   .card-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; flex-wrap: wrap; }
-
-  .source-tag {
-    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
-    padding: 1px 6px; border-radius: 2px; font-weight: 600;
-    background: #e0e0e0; color: #525252;
-  }
+  .source-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; padding: 1px 6px; border-radius: 2px; font-weight: 600; background: #e0e0e0; color: #525252; }
   .img-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
   .img-dot.found    { background: #24a148; }
   .img-dot.aem      { background: #f1c21b; }
@@ -112,12 +66,9 @@
   .img-dot.sourcing { background: #da1e28; }
   .img-dot.missing  { background: #da1e28; }
   .img-label { font-size: 11px; color: #525252; }
-
   .score-chip { margin-left: auto; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 10px; background: #e8daff; color: #6929c4; }
   .score-chip.high { background: #d0e2ff; color: #0043ce; }
-
   .forced-badge { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 2px; background: #fff1f1; color: #da1e28; border: 1px solid #ffb3b8; }
-
   .card-title { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 4px; line-height: 1.4; }
   .card-abstract { font-size: 13px; color: #525252; line-height: 1.55; margin-bottom: 6px; }
   .card-cta-wrap { display: inline-block; }
@@ -130,25 +81,32 @@
   .story-card:hover .edit-hint { display: inline; }
   body.locked [contenteditable] { cursor: default; pointer-events: none; }
   body.locked [contenteditable]:hover { background: none; }
-
-  /* ── Locked ──────────────────────────────────────────────── */
-  body.locked .story-card  { cursor: default; }
+  /* Locked state */
+  body.locked .story-card { cursor: default; }
   body.locked .drag-handle { display: none; }
   body.locked .story-card:hover { border-color: #e0e0e0; box-shadow: none; }
+  body.locked .section-name-input { pointer-events: none; border-bottom-color: transparent; }
+
+  /* ── Add section area ────────────────────────────────────── */
+  .add-section-wrap { max-width: 860px; margin: 0 auto 20px; padding: 0 16px; }
+  .btn-add-section {
+    display: flex; align-items: center; gap: 8px;
+    background: #ffffff; border: 1px dashed #c6c6c6; border-radius: 4px;
+    padding: 12px 16px; width: 100%; cursor: pointer;
+    font-size: 13px; font-weight: 600; color: #0f62fe;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .btn-add-section:hover { border-color: #0f62fe; background: #edf5ff; }
+  .btn-add-section .plus { font-size: 18px; line-height: 1; }
+  body.locked .add-section-wrap { display: none; }
 
   /* ── Footer bar ──────────────────────────────────────────── */
-  .footer-bar {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: #ffffff; border-top: 1px solid #e0e0e0;
-    padding: 10px 20px; display: flex; align-items: center; gap: 16px;
-    z-index: 200; box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
-  }
+  .footer-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #e0e0e0; padding: 10px 20px; display: flex; align-items: center; gap: 16px; z-index: 200; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); }
   .warnings-summary { flex: 1; font-size: 13px; color: #525252; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .warn-chip { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 10px; }
   .warn-chip.red   { background: #fff1f1; color: #da1e28; border: 1px solid #ffb3b8; }
   .warn-chip.amber { background: #fdf6dd; color: #8a3800; border: 1px solid #f1c21b; }
   .warn-chip.green { background: #defbe6; color: #0e6027; border: 1px solid #a7f0ba; }
-
   .btn { padding: 9px 20px; font-size: 14px; font-weight: 600; border: none; border-radius: 3px; cursor: pointer; transition: background 0.15s; }
   .btn-lock { background: #0f62fe; color: #ffffff; }
   .btn-lock:hover:not(:disabled) { background: #0043ce; }
@@ -156,8 +114,7 @@
   .btn-unlock { background: #ffffff; color: #161616; border: 1px solid #c6c6c6; display: none; }
   .btn-unlock:hover { background: #f4f4f4; }
   .lock-confirm { display: none; font-size: 13px; font-weight: 600; color: #24a148; }
-
-  .made-with { text-align: center; font-size: 12px; color: #a8a8a8; padding: 16px 0 8px; border-top: 1px solid #e0e0e0; margin-top: 24px; }
+  .made-with { text-align: center; font-size: 12px; color: #a8a8a8; padding: 16px 0 8px; border-top: 1px solid #e0e0e0; margin-top: 8px; }
 
   /* ── Confirmation modal ──────────────────────────────────── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
@@ -169,7 +126,7 @@
   .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
   .modal-confirm { background: #0f62fe; color: #ffffff; border: none; padding: 9px 18px; font-size: 14px; font-weight: 600; border-radius: 3px; cursor: pointer; }
   .modal-confirm:hover { background: #0043ce; }
-  .modal-cancel  { background: #ffffff; color: #161616; border: 1px solid #c6c6c6; padding: 9px 18px; font-size: 14px; font-weight: 600; border-radius: 3px; cursor: pointer; }
+  .modal-cancel { background: #ffffff; color: #161616; border: 1px solid #c6c6c6; padding: 9px 18px; font-size: 14px; font-weight: 600; border-radius: 3px; cursor: pointer; }
   .modal-cancel:hover { background: #f4f4f4; }
 </style>
 </head>
@@ -182,7 +139,15 @@
 </div>
 
 <div class="main" id="main"></div>
-<!-- Confirmation modal -->
+
+<div class="add-section-wrap">
+  <button class="btn-add-section" id="btnAddSection">
+    <span class="plus">+</span> Add a section
+  </button>
+</div>
+
+<div class="made-with">Made with IBM Bob</div>
+
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-title" id="modalTitle">Replace story?</div>
@@ -194,8 +159,6 @@
   </div>
 </div>
 
-<div class="made-with">Made with IBM Bob</div>
-
 <div class="footer-bar">
   <div class="warnings-summary" id="warningsSummary">Checking draft…</div>
   <span class="lock-confirm" id="lockConfirm">Newsletter locked. Bob is generating subject line options.</span>
@@ -204,38 +167,43 @@
 </div>
 
 <script>
+// ── CONSTANTS ─────────────────────────────────────────────────────────────
+// Fixed sections: always present, cannot be renamed or removed.
+// Dynamic sections: pre-populated from suggested_category, fully editable.
+const FIXED_SECTIONS = ['Hero', 'CEO', 'Just for #fun'];
+
 const DRAFT_DATA = {
   "publication_date": "June 18, 2025",
   "headline": "IBMer News This Week. The news you need to know.",
-  "ceo_slot_empty": false,
-  "skipped_stories": ["S006"],
   "sections": [
-    { "section_name": "Hero", "single_slot": true, "stories": [
-        { "story_id": "S001", "final_title": "Congratulations to our IBM Golden Circle invitees!", "final_abstract": "This year's Golden Circle honorees represent the best of IBM — top performers who have gone above and beyond for clients and colleagues. See if a colleague you know made the list.", "final_cta": "Celebrate our colleagues", "source_type": "w3", "suggested_category": "In the News", "editorial_score": 10, "forced_hero": true, "requires_image": true, "image_url": "https://w3.ibm.com/golden-circle-2026/hero.jpg", "image_status": "found", "flags": [], "order": 1 }
+    { "section_name": "Hero", "single_slot": true, "fixed": true, "stories": [
+        { "story_id": "S001", "final_title": "Congratulations to our IBM Golden Circle invitees!", "final_abstract": "This year's Golden Circle honorees represent the best of IBM — top performers who have gone above and beyond for clients and colleagues. See if a colleague you know made the list.", "final_cta": "Celebrate our colleagues", "source_type": "w3", "suggested_category": "In the News", "editorial_score": 10, "forced_hero": true, "requires_image": true, "image_url": null, "image_status": "aem search recommended", "flags": [], "order": 1 }
     ]},
-    { "section_name": "CEO", "single_slot": false, "stories": [
-        { "story_id": "S002", "final_title": "CEO Office Hours replay: watch Arvind's latest update", "final_abstract": "Missed this week's CEO Office Hours? Catch the full replay to hear Arvind's perspective on IBM's AI strategy, client momentum, and what's ahead for the rest of the year.", "final_cta": "Watch the replay", "source_type": "w3", "suggested_category": "Featured Stories", "editorial_score": 14, "forced_hero": false, "requires_image": false, "image_url": null, "image_status": "not found", "flags": [], "order": 1 }
+    { "section_name": "CEO", "single_slot": false, "fixed": true, "stories": [
+        { "story_id": "S002", "final_title": "CEO Office Hours replay: watch Arvind's latest update", "final_abstract": "Missed this week's CEO Office Hours? Catch the full replay to hear Arvind's perspective on IBM's AI strategy, client momentum, and what's ahead for the rest of the year.", "final_cta": "Watch the replay", "source_type": "w3", "suggested_category": "Featured Stories", "editorial_score": 14, "forced_hero": false, "requires_image": true, "image_url": null, "image_status": "standing asset", "flags": [], "order": 1 },
+        { "story_id": "S008", "final_title": "Arvind at the World Economic Forum: IBM's AI vision", "final_abstract": "Arvind Krishna joined global leaders at Davos to discuss IBM's role in the AI era. Watch the highlights from his panel appearance.", "final_cta": "Watch highlights", "source_type": "w3", "suggested_category": "Featured Stories", "editorial_score": 10, "forced_hero": false, "requires_image": false, "image_url": null, "image_status": "not found", "flags": [], "order": 2 }
     ]},
-    { "section_name": "In the News", "single_slot": false, "stories": [
+    { "section_name": "In the News", "single_slot": false, "fixed": false, "stories": [
         { "story_id": "S003", "final_title": "Register now for Think 2026 — deadline this Friday", "final_abstract": "Think 2026 is IBM's flagship conference and your chance to connect with clients, partners, and colleagues from across the company. Early-bird registration closes this Friday — don't miss your spot.", "final_cta": "Register now", "source_type": "w3", "suggested_category": "In the News", "editorial_score": 14, "forced_hero": false, "requires_image": true, "image_url": "/dam/think-2026/think-banner.jpg", "image_status": "found", "flags": [], "order": 1 }
     ]},
-    { "section_name": "Featured Stories", "single_slot": false, "stories": [] },
-    { "section_name": "Strategy Spotlight", "single_slot": false, "stories": [
+    { "section_name": "Strategy Spotlight", "single_slot": false, "fixed": false, "stories": [
         { "story_id": "S004", "final_title": "How watsonx is transforming client operations at scale", "final_abstract": "Three clients share how IBM watsonx has helped them automate workflows, cut costs, and accelerate decision-making. Real results, real impact.", "final_cta": "Read the stories", "source_type": "blog", "suggested_category": "Strategy Spotlight", "editorial_score": 11, "forced_hero": false, "requires_image": false, "image_url": null, "image_status": "not found", "flags": [], "order": 1 }
     ]},
-    { "section_name": "Latest Updates", "single_slot": false, "stories": [] },
-    { "section_name": "Around IBM", "single_slot": false, "stories": [
+    { "section_name": "Around IBM", "single_slot": false, "fixed": false, "stories": [
         { "story_id": "S005", "final_title": "IBM Week of Impact is coming — here's how to get involved", "final_abstract": "IBM Week of Impact kicks off next month. Find volunteering opportunities near you, sign up for virtual events, and make a difference in your community.", "final_cta": "Find opportunities", "source_type": "w3", "suggested_category": "Around IBM", "editorial_score": 3, "forced_hero": false, "requires_image": true, "image_url": null, "image_status": "needs manual sourcing", "flags": [], "order": 1 }
     ]},
-    { "section_name": "Just for #fun", "single_slot": false, "stories": [
+    { "section_name": "Just for #fun", "single_slot": false, "fixed": true, "stories": [
         { "story_id": "S007", "final_title": "18 across: maker of the world's largest quantum computer?", "final_abstract": "This week's fun fact: IBM holds the record for the world's largest quantum computer. How many qubits? Find out inside.", "final_cta": "Get the answer", "source_type": "other", "suggested_category": "Just for #fun", "editorial_score": 2, "forced_hero": false, "requires_image": false, "image_url": null, "image_status": "not found", "flags": [], "order": 1 }
     ]}
   ]
 };
 
+// ── STATE ─────────────────────────────────────────────────────────────────
 let sections = DRAFT_DATA.sections.map(s => ({ ...s, stories: s.stories.map(st => ({ ...st })) }));
 let isLocked = false, draggingStoryId = null, draggingFromSection = null;
+let sectionCounter = 0; // for unique IDs on dynamic sections
 
+// ── HELPERS ───────────────────────────────────────────────────────────────
 function imgStatusClass(s) {
   if (s === 'found') return 'found';
   if (s === 'aem search recommended') return 'aem';
@@ -250,8 +218,12 @@ function imgLabel(s) {
   if (s === 'needs manual sourcing') return 'Needs sourcing';
   return 'No image';
 }
-function truncate(t, n) { return !t ? '' : t.length <= n ? t : t.slice(0, n).trimEnd() + '…'; }
+function escHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function isFixed(sectionName) { return FIXED_SECTIONS.includes(sectionName); }
 
+// ── RENDER ────────────────────────────────────────────────────────────────
 function renderCard(story) {
   return `<div class="story-card" draggable="true" data-id="${story.story_id}">
     <div class="drag-handle"><span></span><span></span><span></span></div>
@@ -265,74 +237,105 @@ function renderCard(story) {
         ${story.flags && story.flags.length ? '<span class="forced-badge" style="background:#fdf6dd;color:#8a3800;border-color:#f1c21b;">&#9888; Editorial flags</span>' : ''}
         <span class="edit-hint">Click any field to edit</span>
       </div>
-      <div class="card-title"
-        contenteditable="true"
-        data-id="${story.story_id}"
-        data-field="final_title"
-        title="Click to edit headline">${escHtml(story.final_title)}</div>
-      <div class="card-abstract"
-        contenteditable="true"
-        data-id="${story.story_id}"
-        data-field="final_abstract"
-        title="Click to edit abstract">${escHtml(story.final_abstract)}</div>
+      <div class="card-title" contenteditable="true" data-id="${story.story_id}" data-field="final_title" title="Click to edit headline">${escHtml(story.final_title)}</div>
+      <div class="card-abstract" contenteditable="true" data-id="${story.story_id}" data-field="final_abstract" title="Click to edit abstract">${escHtml(story.final_abstract)}</div>
       <div class="card-cta-wrap">
-        <span class="card-cta"
-          contenteditable="true"
-          data-id="${story.story_id}"
-          data-field="final_cta"
-          title="Click to edit CTA">${escHtml(story.final_cta)}</span>
+        <span class="card-cta" contenteditable="true" data-id="${story.story_id}" data-field="final_cta" title="Click to edit CTA">${escHtml(story.final_cta)}</span>
       </div>
     </div>
   </div>`;
 }
 
-function escHtml(s) {
-  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
 function renderSection(sec) {
-  const label = sec.single_slot ? 'Single story' : `${sec.stories.length} stor${sec.stories.length !== 1 ? 'ies' : 'y'}`;
-  const body  = sec.stories.length ? sec.stories.map(renderCard).join('') : `<div class="empty-zone" data-section="${sec.section_name}">Drop a story here</div>`;
-  return `<div class="section-block" data-section="${sec.section_name}">
+  const fixed = isFixed(sec.section_name);
+  const count = sec.stories.length;
+  const badgeLabel = sec.single_slot ? 'Single story' : `${count} stor${count !== 1 ? 'ies' : 'y'}`;
+  const badgeClass = sec.single_slot ? 'badge-single' : fixed ? 'badge-multi' : 'badge-dynamic';
+  const body = count ? sec.stories.map(renderCard).join('') : `<div class="empty-zone" data-section="${escHtml(sec.section_name)}">Drop a story here</div>`;
+
+  const titleHtml = fixed
+    ? `<span class="section-name-fixed">${escHtml(sec.section_name)}</span>`
+    : `<input class="section-name-input" type="text" value="${escHtml(sec.section_name)}" placeholder="Name this section…" data-section-id="${sec._id}" maxlength="60">`;
+
+  const removeBtn = fixed ? '' : `<button class="btn-remove-section" data-section-id="${sec._id}" title="Remove section">&#x2715;</button>`;
+
+  return `<div class="section-block" data-section="${escHtml(sec.section_name)}" data-section-id="${sec._id || ''}">
     <div class="section-header">
-      <span class="section-name">${sec.section_name}</span>
-      <span class="section-badge ${sec.single_slot ? 'badge-single' : 'badge-multi'}">${label}</span>
+      ${titleHtml}
+      <span class="section-badge ${badgeClass}">${badgeLabel}</span>
+      ${removeBtn}
     </div>
-    <div class="story-list" data-section="${sec.section_name}">${body}</div>
+    <div class="story-list" data-section="${escHtml(sec.section_name)}">${body}</div>
   </div>`;
 }
 
 function render() {
   document.getElementById('pubDate').textContent = DRAFT_DATA.publication_date;
   document.getElementById('main').innerHTML = sections.map(renderSection).join('');
-  bindEvents(); validate();
+  bindEvents();
+  validate();
 }
 
+// ── EVENTS ────────────────────────────────────────────────────────────────
 function bindEvents() {
-  // Inline editing — save to data model on blur, prevent drag while editing
-  document.querySelectorAll('[contenteditable]').forEach(el => {
-    el.addEventListener('focus', () => {
-      el.closest('.story-card').setAttribute('draggable', 'false');
+  // Section name editing (dynamic sections only)
+  document.querySelectorAll('.section-name-input').forEach(input => {
+    input.addEventListener('change', () => {
+      const id = input.dataset.sectionId;
+      const newName = input.value.trim() || 'Untitled section';
+      const sec = sections.find(s => String(s._id) === String(id));
+      if (sec) {
+        sec.section_name = newName;
+        // update data-section on the story-list so drag-drop keeps working
+        const block = input.closest('.section-block');
+        if (block) {
+          block.dataset.section = newName;
+          const list = block.querySelector('.story-list');
+          if (list) list.dataset.section = newName;
+          const empty = block.querySelector('.empty-zone');
+          if (empty) empty.dataset.section = newName;
+        }
+      }
+      validate();
     });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
+  });
+
+  // Remove section button
+  document.querySelectorAll('.btn-remove-section').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.sectionId;
+      const sec = sections.find(s => String(s._id) === String(id));
+      if (!sec) return;
+      if (sec.stories.length > 0) {
+        // Move stories back to their suggested_category section or first dynamic section
+        sec.stories.forEach(story => {
+          const target = sections.find(s => s.section_name === story.suggested_category && s !== sec)
+                      || sections.find(s => !isFixed(s.section_name) && s !== sec)
+                      || sections.find(s => s.section_name === 'Just for #fun');
+          if (target) { target.stories.push(story); reorder(target); }
+        });
+      }
+      sections = sections.filter(s => String(s._id) !== String(id));
+      render();
+    });
+  });
+
+  // Inline story field editing
+  document.querySelectorAll('[contenteditable]').forEach(el => {
+    el.addEventListener('focus', () => { el.closest('.story-card').setAttribute('draggable', 'false'); });
     el.addEventListener('blur', () => {
-      const storyId = el.dataset.id;
-      const field   = el.dataset.field;
-      const value   = el.innerText.trim();
-      // Write back to state
-      sections.forEach(sec => sec.stories.forEach(s => {
-        if (s.story_id === storyId) s[field] = value;
-      }));
+      const storyId = el.dataset.id, field = el.dataset.field, value = el.innerText.trim();
+      sections.forEach(sec => sec.stories.forEach(s => { if (s.story_id === storyId) s[field] = value; }));
       el.closest('.story-card').setAttribute('draggable', 'true');
     });
-    // Prevent Enter key from inserting a newline — save instead
-    el.addEventListener('keydown', e => {
-      if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
-    });
-    // Prevent drag starting when clicking to edit
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
     el.addEventListener('mousedown', e => e.stopPropagation());
   });
 
   if (isLocked) return;
+
+  // Drag cards
   document.querySelectorAll('.story-card').forEach(card => {
     card.addEventListener('dragstart', e => {
       draggingStoryId = card.dataset.id;
@@ -345,6 +348,8 @@ function bindEvents() {
       document.querySelectorAll('.drag-over, .drag-target').forEach(el => el.classList.remove('drag-over', 'drag-target'));
     });
   });
+
+  // Drop zones
   document.querySelectorAll('.story-list, .empty-zone').forEach(zone => {
     zone.addEventListener('dragover', e => {
       e.preventDefault(); e.dataTransfer.dropEffect = 'move';
@@ -369,29 +374,43 @@ function getDropTarget(zone, y) {
   return null;
 }
 
+// ── ADD SECTION ───────────────────────────────────────────────────────────
+document.getElementById('btnAddSection').addEventListener('click', () => {
+  // Insert new blank section before "Just for #fun"
+  const funIdx = sections.findIndex(s => s.section_name === 'Just for #fun');
+  const newSec = { section_name: '', single_slot: false, fixed: false, stories: [], _id: ++sectionCounter };
+  if (funIdx !== -1) { sections.splice(funIdx, 0, newSec); } else { sections.push(newSec); }
+  render();
+  // Focus the new section's name input
+  const inputs = document.querySelectorAll('.section-name-input');
+  inputs.forEach(inp => { if (inp.dataset.sectionId == String(sectionCounter)) inp.focus(); });
+});
+
+// Assign stable _id to pre-loaded sections
+sections.forEach((s, i) => { if (!s._id) s._id = ++sectionCounter; });
+
+// ── MOVE STORY ────────────────────────────────────────────────────────────
 function findSection(name) { return sections.find(s => s.section_name === name); }
 
 function moveStory(storyId, fromName, toName, beforeId) {
-  if (!storyId) return;
+  if (!storyId || !toName) return;
   const from = findSection(fromName), to = findSection(toName);
   if (!from || !to) return;
   const idx = from.stories.findIndex(s => s.story_id === storyId);
   if (idx === -1) return;
-
-  // If dropping into a full single-slot section from a different section, show confirmation modal.
+  // Hero is the only single-slot section — confirm if occupied
   if (to.single_slot && fromName !== toName) {
     const occupants = to.stories.filter(s => s.story_id !== storyId);
     if (occupants.length >= 1) {
       const occupant = occupants[0];
       showModal(
-        `Replace ${toName} story?`,
-        `<strong>"${occupant.final_title}"</strong> is currently in the ${toName} slot.<br><br>Replacing it will move it back to <strong>${occupant.suggested_category}</strong>.`,
+        `Replace Hero story?`,
+        `<strong>"${occupant.final_title}"</strong> is currently in the Hero slot.<br><br>Replacing it will move it back to <strong>${occupant.suggested_category}</strong>.`,
         () => applyMove(storyId, fromName, toName, beforeId)
       );
-      return; // wait for modal confirmation
+      return;
     }
   }
-
   applyMove(storyId, fromName, toName, beforeId);
 }
 
@@ -400,17 +419,14 @@ function applyMove(storyId, fromName, toName, beforeId) {
   if (!from || !to) return;
   const idx = from.stories.findIndex(s => s.story_id === storyId);
   if (idx === -1) return;
-
-  // Displace occupant if needed
   if (to.single_slot && fromName !== toName) {
     const occupants = to.stories.filter(s => s.story_id !== storyId);
     if (occupants.length >= 1) {
       const d = to.stories.splice(0, 1)[0];
-      const fb = findSection(d.suggested_category) || findSection('In the News');
-      fb.stories.push(d); reorder(fb);
+      const fb = findSection(d.suggested_category) || sections.find(s => !isFixed(s.section_name)) || findSection('Just for #fun');
+      if (fb) { fb.stories.push(d); reorder(fb); }
     }
   }
-
   const story = from.stories.splice(idx, 1)[0];
   if (beforeId) {
     const bi = to.stories.findIndex(s => s.story_id === beforeId);
@@ -419,32 +435,25 @@ function applyMove(storyId, fromName, toName, beforeId) {
   reorder(to); reorder(from); render();
 }
 
-let _pendingConfirm = null;
+function reorder(sec) { sec.stories.forEach((s, i) => s.order = i + 1); }
 
+// ── MODAL ─────────────────────────────────────────────────────────────────
+let _pendingConfirm = null;
 function showModal(title, body, onConfirm) {
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').innerHTML = body;
   document.getElementById('modalOverlay').classList.add('visible');
   _pendingConfirm = onConfirm;
 }
-
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('visible');
   _pendingConfirm = null;
 }
-
-document.getElementById('modalConfirm').addEventListener('click', () => {
-  const fn = _pendingConfirm;
-  closeModal();
-  if (fn) fn();
-});
+document.getElementById('modalConfirm').addEventListener('click', () => { const fn = _pendingConfirm; closeModal(); if (fn) fn(); });
 document.getElementById('modalCancel').addEventListener('click', closeModal);
-document.getElementById('modalOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-});
+document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === document.getElementById('modalOverlay')) closeModal(); });
 
-function reorder(sec) { sec.stories.forEach((s, i) => s.order = i + 1); }
-
+// ── LOCK / UNLOCK ─────────────────────────────────────────────────────────
 document.getElementById('btnLock').addEventListener('click', () => {
   if (isLocked) return;
   isLocked = true;
@@ -467,22 +476,38 @@ document.getElementById('btnUnlock').addEventListener('click', () => {
 });
 
 function buildDraft() {
-  return { publication_date: DRAFT_DATA.publication_date, headline: DRAFT_DATA.headline,
-    sections: sections.map(sec => ({ section_name: sec.section_name,
-      stories: sec.stories.map((s, i) => ({ story_id: s.story_id, final_title: s.final_title,
-        final_abstract: s.final_abstract, final_cta: s.final_cta, image: s.image_url || 'none', order: i + 1 })) })) };
+  return {
+    publication_date: DRAFT_DATA.publication_date,
+    headline: DRAFT_DATA.headline,
+    sections: sections.map(sec => ({
+      section_name: sec.section_name || 'Untitled section',
+      stories: sec.stories.map((s, i) => ({
+        story_id: s.story_id, final_title: s.final_title,
+        final_abstract: s.final_abstract, final_cta: s.final_cta,
+        image: s.image_url || 'none', order: i + 1
+      }))
+    }))
+  };
 }
 
+// ── VALIDATION ────────────────────────────────────────────────────────────
 function validate() {
   const hero = findSection('Hero'), ceo = findSection('CEO');
   const warns = [];
-  if (!hero || !hero.stories.length) warns.push({ level: 'red',   msg: 'Hero slot is empty' });
-  if (!ceo  || !ceo.stories.length)  warns.push({ level: 'red',   msg: 'CEO slot is empty'  });
+  if (!hero || !hero.stories.length) warns.push({ level: 'red', msg: 'Hero slot is empty' });
+  if (!ceo  || !ceo.stories.length)  warns.push({ level: 'red', msg: 'CEO section is empty' });
+
+  // Unnamed dynamic sections
+  sections.filter(s => !isFixed(s.section_name) && !s.section_name.trim()).forEach(() => {
+    warns.push({ level: 'amber', msg: 'A section is missing a title' });
+  });
+
   sections.forEach(sec => sec.stories.forEach(s => {
     if (s.forced_hero) warns.push({ level: 'amber', msg: `"${s.final_title.slice(0,40)}&#8230;" force-promoted to Hero (score ${s.editorial_score})` });
     if (s.flags && s.flags.length) warns.push({ level: 'amber', msg: `Unresolved flags: "${s.final_title.slice(0,35)}&#8230;"` });
   }));
-  ['Hero','CEO','Around IBM','Just for #fun'].forEach(n => {
+
+  ['Hero', 'CEO', 'Around IBM', 'Just for #fun'].forEach(n => {
     const sec = findSection(n);
     if (sec) sec.stories.forEach(s => {
       if (s.requires_image) {
@@ -495,12 +520,15 @@ function validate() {
       }
     });
   });
+
   document.getElementById('btnLock').disabled = warns.some(w => w.level === 'red') || isLocked;
   document.getElementById('warningsSummary').innerHTML = !warns.length
     ? '<span class="warn-chip green">&#10003; Draft looks good — ready to lock</span>'
     : warns.map(w => `<span class="warn-chip ${w.level}">${w.msg}</span>`).join('');
 }
 
+// ── INIT ──────────────────────────────────────────────────────────────────
+sections.forEach((s, i) => { s._id = i + 1; sectionCounter = i + 1; });
 render();
 </script>
 </body>
