@@ -107,8 +107,10 @@
   }
   .img-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
   .img-dot.found    { background: #24a148; }
+  .img-dot.aem      { background: #f1c21b; }
+  .img-dot.standing { background: #f1c21b; }
+  .img-dot.sourcing { background: #da1e28; }
   .img-dot.missing  { background: #da1e28; }
-  .img-dot.sourcing { background: #f1c21b; }
   .img-label { font-size: 11px; color: #525252; }
 
   .score-chip { margin-left: auto; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 10px; background: #e8daff; color: #6929c4; }
@@ -204,8 +206,20 @@ const DRAFT_DATA = {
 let sections = DRAFT_DATA.sections.map(s => ({ ...s, stories: s.stories.map(st => ({ ...st })) }));
 let isLocked = false, draggingStoryId = null, draggingFromSection = null;
 
-function imgStatusClass(s) { return s === 'found' ? 'found' : s === 'needs manual sourcing' ? 'sourcing' : 'missing'; }
-function imgLabel(s) { return s === 'found' ? 'Image ready' : s === 'needs manual sourcing' ? 'Image needed' : 'No image'; }
+function imgStatusClass(s) {
+  if (s === 'found') return 'found';
+  if (s === 'aem search recommended') return 'aem';
+  if (s === 'standing asset') return 'standing';
+  if (s === 'needs manual sourcing') return 'sourcing';
+  return 'missing';
+}
+function imgLabel(s) {
+  if (s === 'found') return 'Image ready';
+  if (s === 'aem search recommended') return 'AEM candidate';
+  if (s === 'standing asset') return 'Standing asset';
+  if (s === 'needs manual sourcing') return 'Needs sourcing';
+  return 'No image';
+}
 function truncate(t, n) { return !t ? '' : t.length <= n ? t : t.slice(0, n).trimEnd() + '…'; }
 
 function renderCard(story) {
@@ -360,7 +374,14 @@ function validate() {
   ['Hero','CEO','Around IBM','Just for #fun'].forEach(n => {
     const sec = findSection(n);
     if (sec) sec.stories.forEach(s => {
-      if (s.requires_image && s.image_status !== 'found') warns.push({ level: 'amber', msg: `Missing image: "${s.final_title.slice(0,35)}&#8230;"` });
+      if (s.requires_image) {
+        if (s.image_status === 'needs manual sourcing' || s.image_status === 'not found')
+          warns.push({ level: 'red',   msg: `No image: "${s.final_title.slice(0,35)}&#8230;"` });
+        else if (s.image_status === 'aem search recommended')
+          warns.push({ level: 'amber', msg: `Confirm AEM image: "${s.final_title.slice(0,35)}&#8230;"` });
+        else if (s.image_status === 'standing asset')
+          warns.push({ level: 'amber', msg: `Verify standing asset: "${s.final_title.slice(0,35)}&#8230;"` });
+      }
     });
   });
   document.getElementById('btnLock').disabled = warns.some(w => w.level === 'red') || isLocked;
