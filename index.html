@@ -153,6 +153,19 @@
   .lock-confirm { display: none; font-size: 13px; font-weight: 600; color: #24a148; }
 
   .made-with { text-align: center; font-size: 12px; color: #a8a8a8; padding: 16px 0 8px; border-top: 1px solid #e0e0e0; margin-top: 24px; }
+
+  /* ── Confirmation modal ──────────────────────────────────── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; align-items: center; justify-content: center; }
+  .modal-overlay.visible { display: flex; }
+  .modal { background: #ffffff; border-radius: 4px; padding: 24px; max-width: 420px; width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+  .modal-title { font-size: 16px; font-weight: 600; color: #161616; margin-bottom: 8px; }
+  .modal-body { font-size: 14px; color: #525252; line-height: 1.6; margin-bottom: 20px; }
+  .modal-body strong { color: #161616; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .modal-confirm { background: #0f62fe; color: #ffffff; border: none; padding: 9px 18px; font-size: 14px; font-weight: 600; border-radius: 3px; cursor: pointer; }
+  .modal-confirm:hover { background: #0043ce; }
+  .modal-cancel  { background: #ffffff; color: #161616; border: 1px solid #c6c6c6; padding: 9px 18px; font-size: 14px; font-weight: 600; border-radius: 3px; cursor: pointer; }
+  .modal-cancel:hover { background: #f4f4f4; }
 </style>
 </head>
 <body>
@@ -164,6 +177,18 @@
 </div>
 
 <div class="main" id="main"></div>
+<!-- Confirmation modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Replace story?</div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-confirm" id="modalConfirm">Yes, replace</button>
+    </div>
+  </div>
+</div>
+
 <div class="made-with">Made with IBM Bob</div>
 
 <div class="footer-bar">
@@ -320,8 +345,30 @@ function moveStory(storyId, fromName, toName, beforeId) {
   const idx = from.stories.findIndex(s => s.story_id === storyId);
   if (idx === -1) return;
 
-  // Displacement check BEFORE splicing, and only when moving to a different section.
-  // Counts occupants that aren't the dragged story to avoid self-displacement.
+  // If dropping into a full single-slot section from a different section, show confirmation modal.
+  if (to.single_slot && fromName !== toName) {
+    const occupants = to.stories.filter(s => s.story_id !== storyId);
+    if (occupants.length >= 1) {
+      const occupant = occupants[0];
+      showModal(
+        `Replace ${toName} story?`,
+        `<strong>"${occupant.final_title}"</strong> is currently in the ${toName} slot.<br><br>Replacing it will move it back to <strong>${occupant.suggested_category}</strong>.`,
+        () => applyMove(storyId, fromName, toName, beforeId)
+      );
+      return; // wait for modal confirmation
+    }
+  }
+
+  applyMove(storyId, fromName, toName, beforeId);
+}
+
+function applyMove(storyId, fromName, toName, beforeId) {
+  const from = findSection(fromName), to = findSection(toName);
+  if (!from || !to) return;
+  const idx = from.stories.findIndex(s => s.story_id === storyId);
+  if (idx === -1) return;
+
+  // Displace occupant if needed
   if (to.single_slot && fromName !== toName) {
     const occupants = to.stories.filter(s => s.story_id !== storyId);
     if (occupants.length >= 1) {
@@ -338,6 +385,30 @@ function moveStory(storyId, fromName, toName, beforeId) {
   } else { to.stories.push(story); }
   reorder(to); reorder(from); render();
 }
+
+let _pendingConfirm = null;
+
+function showModal(title, body, onConfirm) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('modalOverlay').classList.add('visible');
+  _pendingConfirm = onConfirm;
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('visible');
+  _pendingConfirm = null;
+}
+
+document.getElementById('modalConfirm').addEventListener('click', () => {
+  const fn = _pendingConfirm;
+  closeModal();
+  if (fn) fn();
+});
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
 
 function reorder(sec) { sec.stories.forEach((s, i) => s.order = i + 1); }
 
