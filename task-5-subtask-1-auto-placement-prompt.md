@@ -89,10 +89,9 @@ Record the total as `editorial_score` on each story object.
 
 Apply these rules in order. Once a story is assigned to a section, do not re-assign it.
 
-**Step 1 — CEO slot (single story)**
-- Find all stories where `final_title` or `final_abstract` contains any of these keywords (case-insensitive): `CEO`, `Arvind`, `Office Hours`, `leadership`, `year-start`
-- From those matches, select the one with the highest `editorial_score`. Use the CEO content priority order from the pattern guide to break ties: Office Hours replay first, then external event appearances, then CEO messages, then leadership change announcements.
-- Assign it to the `CEO` section.
+**Step 1 — CEO slot (multi-story)**
+- Find ALL stories where `final_title` or `final_abstract` contains any of these keywords (case-insensitive): `CEO`, `Arvind`, `Office Hours`, `leadership`, `year-start`
+- Assign all matching stories to the `CEO` section. Sort them by `editorial_score` descending, using the CEO content priority order as a tiebreaker: Office Hours replay first, then external event appearances, then CEO messages, then leadership change announcements.
 - If no stories match any CEO keyword, leave the CEO section empty and set `"ceo_slot_empty": true`.
 
 **Step 2 — Hero slot (single story)**
