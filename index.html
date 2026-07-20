@@ -8,556 +8,365 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
-    background: #161616;
-    color: #f4f4f4;
+    font-family: -apple-system, "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
     font-size: 14px;
     line-height: 1.6;
+    background: #f4f4f4;
+    color: #161616;
     padding-bottom: 80px;
   }
 
+  /* ── Header ─────────────────────────────────────────────── */
   .page-header {
-    background: #000;
-    border-bottom: 2px solid #0f62fe;
-    padding: 16px 24px 14px;
+    background: #ffffff;
+    color: #161616;
+    padding: 20px 24px 16px;
     position: sticky;
     top: 0;
     z-index: 100;
+    border-bottom: 2px solid #0f62fe;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   }
-  .page-header h1 { font-size: 16px; font-weight: 600; letter-spacing: .02em; color: #fff; }
-  .page-header p  { font-size: 12px; color: #a8a8a8; margin-top: 2px; }
-  .pub-date {
-    display: inline-block;
-    background: #0f62fe;
-    color: #fff;
+  .page-header .eyebrow {
     font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0f62fe;
     font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 2px;
-    margin-top: 6px;
+    margin-bottom: 4px;
   }
+  .page-header h1 { font-size: 18px; font-weight: 600; color: #161616; }
+  .page-header .pub-date { font-size: 13px; color: #525252; margin-top: 2px; }
 
-  .main { max-width: 900px; margin: 0 auto; padding: 20px 16px 0; }
+  /* ── Main ────────────────────────────────────────────────── */
+  .main { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
 
-  .newsletter-section {
+  /* ── Section ─────────────────────────────────────────────── */
+  .section-block {
     margin-bottom: 20px;
-    border: 1px solid #393939;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 4px;
-    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
   .section-header {
-    background: #262626;
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid #393939;
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: #f4f4f4;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 4px 4px 0 0;
   }
-  .section-header h2 { font-size: 13px; font-weight: 600; color: #f4f4f4; flex: 1; }
-  .section-badge {
-    font-size: 10px; padding: 2px 7px; border-radius: 10px;
-    font-weight: 600; letter-spacing: .03em;
+  .section-name {
+    font-size: 13px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em; color: #161616;
   }
-  .badge-single { background: #6929c4; color: #fff; }
-  .badge-multi  { background: #393939; color: #c6c6c6; }
-  .story-count  { font-size: 11px; color: #a8a8a8; }
+  .section-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+  .badge-single { background: #d0e2ff; color: #0043ce; }
+  .badge-multi  { background: #e8daff; color: #6929c4; }
 
-  .drop-zone {
-    min-height: 60px;
-    padding: 8px;
-  }
-  .drop-zone.drag-over {
-    background: #1c3a5e;
+  .story-list { padding: 8px; min-height: 60px; transition: background 0.15s; }
+  .story-list.drag-over {
+    background: #edf5ff;
     outline: 2px dashed #0f62fe;
     outline-offset: -2px;
-  }
-  .drop-zone.empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #525252;
-    font-size: 12px;
-    font-style: italic;
+    border-radius: 2px;
   }
 
+  .empty-zone {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 60px;
+    border: 1px dashed #c6c6c6; border-radius: 3px; margin: 6px;
+    color: #a8a8a8; font-size: 13px; font-style: italic;
+  }
+  .empty-zone.drag-over { background: #edf5ff; border-color: #0f62fe; color: #0f62fe; }
+
+  /* ── Story card ──────────────────────────────────────────── */
   .story-card {
-    background: #262626;
-    border: 1px solid #393939;
-    border-radius: 3px;
-    padding: 12px 12px 10px 10px;
-    margin-bottom: 6px;
-    cursor: grab;
-    display: flex;
-    gap: 10px;
-    position: relative;
-    transition: border-color .15s;
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px;
+    padding: 12px 12px 10px; margin-bottom: 6px;
+    cursor: grab; user-select: none;
+    transition: box-shadow 0.15s, border-color 0.15s;
   }
   .story-card:last-child { margin-bottom: 0; }
-  .story-card * { pointer-events: none; }
-  .story-card .abstract-toggle { pointer-events: auto; cursor: pointer; }
-  .story-card.dragging { opacity: .45; cursor: grabbing; }
-  .story-card:hover { border-color: #525252; }
-  .story-card.locked { cursor: default; }
+  .story-card:hover { border-color: #0f62fe; box-shadow: 0 2px 8px rgba(15,98,254,0.10); }
+  .story-card.dragging { opacity: 0.4; cursor: grabbing; }
+  .story-card.drag-target { border-top: 3px solid #0f62fe; }
 
-  .drag-handle {
-    color: #525252; font-size: 16px; cursor: grab;
-    user-select: none; flex-shrink: 0; padding-top: 2px;
-  }
-  .story-card.locked .drag-handle { cursor: default; color: #393939; }
+  .drag-handle { flex-shrink: 0; display: flex; flex-direction: column; gap: 3px; padding-top: 4px; cursor: grab; }
+  .drag-handle span { display: block; width: 16px; height: 2px; background: #c6c6c6; border-radius: 1px; }
+  .story-card:hover .drag-handle span { background: #0f62fe; }
 
   .card-body { flex: 1; min-width: 0; }
-  .card-meta {
-    display: flex; align-items: center; gap: 6px;
-    margin-bottom: 5px; flex-wrap: wrap;
+  .card-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; flex-wrap: wrap; }
+
+  .source-tag {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 1px 6px; border-radius: 2px; font-weight: 600;
+    background: #e0e0e0; color: #525252;
   }
-  .source-label {
-    font-size: 10px; padding: 1px 6px; border-radius: 2px;
-    font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
-  }
-  .src-w3    { background: #042456; color: #78a9ff; }
-  .src-blog  { background: #1c4d3e; color: #42be65; }
-  .src-press { background: #3b2d4f; color: #be95ff; }
-  .src-other { background: #393939; color: #c6c6c6; }
-  .score-badge {
-    font-size: 10px; color: #a8a8a8;
-    border: 1px solid #393939; padding: 1px 6px; border-radius: 10px;
-  }
-  .img-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-  .img-found   { background: #24a148; }
-  .img-missing { background: #da1e28; }
-  .img-manual  { background: #f1c21b; }
-  .forced-hero-badge {
-    font-size: 10px; background: #f1c21b; color: #161616;
-    font-weight: 700; padding: 2px 7px; border-radius: 2px;
-  }
-  .card-title  { font-size: 13px; font-weight: 600; color: #f4f4f4; margin-bottom: 4px; line-height: 1.4; }
-  .card-abstract { font-size: 12px; color: #c6c6c6; line-height: 1.5; }
+  .img-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+  .img-dot.found    { background: #24a148; }
+  .img-dot.missing  { background: #da1e28; }
+  .img-dot.sourcing { background: #f1c21b; }
+  .img-label { font-size: 11px; color: #525252; }
+
+  .score-chip { margin-left: auto; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 10px; background: #e8daff; color: #6929c4; }
+  .score-chip.high { background: #d0e2ff; color: #0043ce; }
+
+  .forced-badge { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 2px; background: #fff1f1; color: #da1e28; border: 1px solid #ffb3b8; }
+
+  .card-title { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 4px; line-height: 1.4; }
+  .card-abstract { font-size: 13px; color: #525252; line-height: 1.55; margin-bottom: 6px; }
   .abstract-full { display: none; }
-  .abstract-toggle {
-    color: #78a9ff; cursor: pointer; font-size: 11px;
-    margin-left: 4px; text-decoration: underline; text-underline-offset: 2px;
-  }
-  .card-cta {
-    display: inline-block; margin-top: 7px; font-size: 11px; font-weight: 600;
-    color: #78a9ff; background: #0e1e3a; padding: 3px 10px;
-    border-radius: 10px; border: 1px solid #0f62fe;
-  }
+  .toggle-abstract { background: none; border: none; color: #0f62fe; font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline; }
+  .toggle-abstract:hover { color: #0043ce; }
 
-  .validation-bar {
+  .card-cta { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; background: #0f62fe; color: #ffffff; letter-spacing: 0.02em; }
+
+  /* ── Locked ──────────────────────────────────────────────── */
+  body.locked .story-card  { cursor: default; }
+  body.locked .drag-handle { display: none; }
+  body.locked .story-card:hover { border-color: #e0e0e0; box-shadow: none; }
+
+  /* ── Footer bar ──────────────────────────────────────────── */
+  .footer-bar {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: #1c1c1c; border-top: 1px solid #393939;
-    padding: 10px 20px; display: flex; align-items: center;
-    gap: 16px; z-index: 200; flex-wrap: wrap;
+    background: #ffffff; border-top: 1px solid #e0e0e0;
+    padding: 10px 20px; display: flex; align-items: center; gap: 16px;
+    z-index: 200; box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
   }
-  .val-summary { display: flex; gap: 12px; flex: 1; flex-wrap: wrap; }
-  .val-item { font-size: 12px; display: flex; align-items: center; gap: 5px; }
-  .val-dot-red   { width: 8px; height: 8px; border-radius: 50%; background: #da1e28; flex-shrink:0; }
-  .val-dot-amber { width: 8px; height: 8px; border-radius: 50%; background: #f1c21b; flex-shrink:0; }
-  .val-dot-green { width: 8px; height: 8px; border-radius: 50%; background: #24a148; flex-shrink:0; }
+  .warnings-summary { flex: 1; font-size: 13px; color: #525252; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .warn-chip { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 10px; }
+  .warn-chip.red   { background: #fff1f1; color: #da1e28; border: 1px solid #ffb3b8; }
+  .warn-chip.amber { background: #fdf6dd; color: #8a3800; border: 1px solid #f1c21b; }
+  .warn-chip.green { background: #defbe6; color: #0e6027; border: 1px solid #a7f0ba; }
 
-  .lock-btn {
-    background: #0f62fe; color: #fff; border: none;
-    padding: 9px 20px; font-size: 13px; font-weight: 600;
-    border-radius: 2px; cursor: pointer; white-space: nowrap; letter-spacing: .02em;
-  }
-  .lock-btn:disabled { background: #393939; color: #525252; cursor: not-allowed; }
-  .unlock-btn {
-    background: transparent; color: #78a9ff; border: 1px solid #78a9ff;
-    padding: 8px 18px; font-size: 13px; font-weight: 600;
-    border-radius: 2px; cursor: pointer; white-space: nowrap; display: none;
-  }
-  .lock-confirm { font-size: 12px; color: #24a148; font-weight: 600; display: none; }
+  .btn { padding: 9px 20px; font-size: 14px; font-weight: 600; border: none; border-radius: 3px; cursor: pointer; transition: background 0.15s; }
+  .btn-lock { background: #0f62fe; color: #ffffff; }
+  .btn-lock:hover:not(:disabled) { background: #0043ce; }
+  .btn-lock:disabled { background: #c6c6c6; color: #8d8d8d; cursor: not-allowed; }
+  .btn-unlock { background: #ffffff; color: #161616; border: 1px solid #c6c6c6; display: none; }
+  .btn-unlock:hover { background: #f4f4f4; }
+  .lock-confirm { display: none; font-size: 13px; font-weight: 600; color: #24a148; }
 
-  .skipped-section { max-width: 900px; margin: 0 auto 20px; padding: 0 16px; }
-  .skipped-header {
-    font-size: 11px; font-weight: 600; color: #da1e28;
-    text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; padding-left: 4px;
-  }
-  .skipped-pill {
-    display: inline-block; background: #2d1b1b; border: 1px solid #da1e28;
-    color: #da1e28; font-size: 11px; padding: 3px 10px; border-radius: 10px; margin-right: 6px;
-  }
-
-  .assembly-notes {
-    max-width: 900px; margin: 0 auto 20px; padding: 0 16px;
-  }
-  .assembly-notes-inner {
-    background: #1c2a1c; border: 1px solid #24a148; border-radius: 4px;
-    font-size: 12px; color: #a7f0ba; line-height: 1.7; padding: 10px 14px 12px;
-  }
-  .assembly-notes-inner h3 {
-    font-size: 12px; font-weight: 700; color: #42be65;
-    margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em;
-  }
-  .assembly-notes-inner ul { padding-left: 18px; }
-  .assembly-notes-inner li { margin-bottom: 3px; }
-
-  .bob-output { display: none; max-width: 900px; margin: 10px auto; padding: 0 16px; }
-  .bob-output h3 {
-    font-size: 12px; font-weight: 700; color: #42be65;
-    margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em;
-  }
-  .bob-output pre {
-    background: #0d2d0d; border: 1px solid #24a148; border-radius: 3px;
-    padding: 14px; font-size: 11px; color: #a7f0ba;
-    white-space: pre-wrap; word-break: break-all;
-    overflow-x: auto; max-height: 320px; overflow-y: auto;
-  }
-
-  .page-footer {
-    text-align: center; font-size: 11px; color: #525252;
-    border-top: 1px solid #393939; padding: 14px 0 6px;
-    margin: 24px 16px 0; max-width: 900px;
-    margin-left: auto; margin-right: auto;
-  }
+  .made-with { text-align: center; font-size: 12px; color: #a8a8a8; padding: 16px 0 8px; border-top: 1px solid #e0e0e0; margin-top: 24px; }
 </style>
 </head>
 <body>
 
 <div class="page-header">
-  <h1>IBMer News — Newsletter Assembly</h1>
-  <p>Auto-placed draft · Drag stories to reorder or move between sections · Lock when ready</p>
-  <span class="pub-date">Publication Date: TBC</span>
+  <div class="eyebrow">IBMer News — Newsletter Assembly</div>
+  <h1>IBMer News This Week. The news you need to know.</h1>
+  <div class="pub-date" id="pubDate">Loading…</div>
 </div>
 
 <div class="main" id="main"></div>
+<div class="made-with">Made with IBM Bob</div>
 
-<div class="skipped-section" id="skipped-section" style="display:none;">
-  <div class="skipped-header">Skipped (not approved)</div>
-  <div id="skipped-pills"></div>
+<div class="footer-bar">
+  <div class="warnings-summary" id="warningsSummary">Checking draft…</div>
+  <span class="lock-confirm" id="lockConfirm">Newsletter locked. Bob is generating subject line options.</span>
+  <button class="btn btn-unlock" id="btnUnlock">Unlock to edit</button>
+  <button class="btn btn-lock"   id="btnLock"   disabled>Lock Newsletter</button>
 </div>
-
-<div class="assembly-notes">
-  <div class="assembly-notes-inner">
-    <h3>Assembly Notes</h3>
-    <ul>
-      <li><strong>Hero → S001</strong> — Golden Circle matches Tier 2 (top-tier award recognition). No story reaches the 25-point threshold so <em>forced_hero: true</em> is set.</li>
-      <li><strong>CEO → S002</strong> — Title contains "CEO", "Office Hours", and "Arvind". CEO Office Hours replay is the highest-priority CEO content type.</li>
-      <li><strong>Forced Hero warning active</strong> — S001 scored 10; amber badge is shown on the card.</li>
-      <li><strong>Empty sections</strong> — Featured Stories and Latest Updates have no stories this issue.</li>
-      <li><strong>Skipped</strong> — S006 "Q2 internal operations update" excluded (approved: false; abstract flagged as too vague).</li>
-    </ul>
-  </div>
-</div>
-
-<div class="bob-output" id="bob-output">
-  <h3>Locked Draft JSON — ready for Task 6 (Subject Line Generator)</h3>
-  <pre id="output-json"></pre>
-</div>
-
-<div class="validation-bar">
-  <div class="val-summary" id="val-summary"></div>
-  <span class="lock-confirm" id="lock-confirm">&#10003; Newsletter locked. Bob is generating subject line options.</span>
-  <button class="unlock-btn" id="unlock-btn">Unlock to edit</button>
-  <button class="lock-btn" id="lock-btn">Lock Newsletter</button>
-</div>
-
-<div class="page-footer">Made with IBM Bob</div>
 
 <script>
-const DRAFT = {
-  publication_date: "TBC",
-  headline: "IBMer News This Week. The news you need to know.",
-  ceo_slot_empty: false,
-  skipped_stories: ["S006"],
-  sections: [
-    {
-      section_name: "Hero", single_slot: true,
-      stories: [{
-        story_id: "S001",
-        final_title: "Congratulations to our IBM Golden Circle invitees!",
-        final_abstract: "This year's Golden Circle honourees represent the best of IBM — top performers who have gone above and beyond for clients and colleagues. See if a colleague you know made the list.",
-        final_cta: "Celebrate our colleagues",
-        source_type: "w3", suggested_category: "In the News",
-        editorial_score: 10, forced_hero: true,
-        requires_image: true, image_url: "https://w3.ibm.com/golden-circle-2026/hero.jpg",
-        image_status: "found", flags: [], order: 1
-      }]
-    },
-    {
-      section_name: "CEO", single_slot: true,
-      stories: [{
-        story_id: "S002",
-        final_title: "CEO Office Hours replay: watch Arvind's latest update",
-        final_abstract: "Missed this week's CEO Office Hours? Catch the full replay to hear Arvind's perspective on IBM's AI strategy, client momentum, and what's ahead for the rest of the year.",
-        final_cta: "Watch the replay",
-        source_type: "w3", suggested_category: "Featured Stories",
-        editorial_score: 14, forced_hero: false,
-        requires_image: false, image_url: null,
-        image_status: "not found", flags: [], order: 1
-      }]
-    },
-    {
-      section_name: "In the News", single_slot: false,
-      stories: [{
-        story_id: "S003",
-        final_title: "Register now for Think 2026 — deadline this Friday",
-        final_abstract: "Think 2026 is IBM's flagship conference and your chance to connect with clients, partners, and colleagues from across the company. Early-bird registration closes this Friday — don't miss your spot.",
-        final_cta: "Register now",
-        source_type: "w3", suggested_category: "In the News",
-        editorial_score: 19, forced_hero: false,
-        requires_image: true, image_url: "/dam/think-2026/think-banner.jpg",
-        image_status: "found", flags: [], order: 1
-      }]
-    },
-    { section_name: "Featured Stories", single_slot: false, stories: [] },
-    {
-      section_name: "Strategy Spotlight", single_slot: false,
-      stories: [{
-        story_id: "S004",
-        final_title: "How watsonx is transforming client operations at scale",
-        final_abstract: "Three clients share how IBM watsonx has helped them automate workflows, cut costs, and accelerate decision-making. Real results, real impact.",
-        final_cta: "Read the stories",
-        source_type: "blog", suggested_category: "Strategy Spotlight",
-        editorial_score: 17, forced_hero: false,
-        requires_image: false, image_url: null,
-        image_status: "not found", flags: [], order: 1
-      }]
-    },
-    { section_name: "Latest Updates", single_slot: false, stories: [] },
-    {
-      section_name: "Around IBM", single_slot: false,
-      stories: [{
-        story_id: "S005",
-        final_title: "IBM Week of Impact is coming — here's how to get involved",
-        final_abstract: "IBM Week of Impact kicks off next month. Find volunteering opportunities near you, sign up for virtual events, and make a difference in your community.",
-        final_cta: "Find opportunities",
-        source_type: "w3", suggested_category: "Around IBM",
-        editorial_score: 3, forced_hero: false,
-        requires_image: true, image_url: null,
-        image_status: "needs manual sourcing", flags: [], order: 1
-      }]
-    },
-    {
-      section_name: "Just for #fun", single_slot: false,
-      stories: [{
-        story_id: "S007",
-        final_title: "18 across: maker of the world's largest quantum computer?",
-        final_abstract: "This week's fun fact: IBM holds the record for the world's largest quantum computer. How many qubits? Find out inside.",
-        final_cta: "Get the answer",
-        source_type: "other", suggested_category: "Just for #fun",
-        editorial_score: 2, forced_hero: false,
-        requires_image: false, image_url: null,
-        image_status: "not found", flags: [], order: 1
-      }]
-    }
+const DRAFT_DATA = {
+  "publication_date": "June 18, 2025",
+  "headline": "IBMer News This Week. The news you need to know.",
+  "ceo_slot_empty": false,
+  "skipped_stories": ["S006"],
+  "sections": [
+    { "section_name": "Hero", "single_slot": true, "stories": [
+        { "story_id": "S001", "final_title": "Congratulations to our IBM Golden Circle invitees!", "final_abstract": "This year's Golden Circle honourees represent the best of IBM — top performers who have gone above and beyond for clients and colleagues. See if a colleague you know made the list.", "final_cta": "Celebrate our colleagues", "source_type": "w3", "suggested_category": "In the News", "editorial_score": 10, "forced_hero": true, "requires_image": true, "image_url": "https://w3.ibm.com/golden-circle-2026/hero.jpg", "image_status": "found", "flags": [], "order": 1 }
+    ]},
+    { "section_name": "CEO", "single_slot": true, "stories": [
+        { "story_id": "S002", "final_title": "CEO Office Hours replay: watch Arvind's latest update", "final_abstract": "Missed this week's CEO Office Hours? Catch the full replay to hear Arvind's perspective on IBM's AI strategy, client momentum, and what's ahead for the rest of the year.", "final_cta": "Watch the replay", "source_type": "w3", "suggested_category": "Featured Stories", "editorial_score": 14, "forced_hero": false, "requires_image": false, "image_url": null, "image_status": "not found", "flags": [], "order": 1 }
+    ]},
+    { "section_name": "In the News", "single_slot": false, "stories": [
+        { "story_id": "S003", "final_title": "Register now for Think 2026 — deadline this Friday", "final_abstract": "Think 2026 is IBM's flagship conference and your chance to connect with clients, partners, and colleagues from across the company. Early-bird registration closes this Friday — don't miss your spot.", "final_cta": "Register now", "source_type": "w3", "suggested_category": "In the News", "editorial_score": 14, "forced_hero": false, "requires_image": true, "image_url": "/dam/think-2026/think-banner.jpg", "image_status": "found", "flags": [], "order": 1 }
+    ]},
+    { "section_name": "Featured Stories", "single_slot": false, "stories": [] },
+    { "section_name": "Strategy Spotlight", "single_slot": false, "stories": [
+        { "story_id": "S004", "final_title": "How watsonx is transforming client operations at scale", "final_abstract": "Three clients share how IBM watsonx has helped them automate workflows, cut costs, and accelerate decision-making. Real results, real impact.", "final_cta": "Read the stories", "source_type": "blog", "suggested_category": "Strategy Spotlight", "editorial_score": 11, "forced_hero": false, "requires_image": false, "image_url": null, "image_status": "not found", "flags": [], "order": 1 }
+    ]},
+    { "section_name": "Latest Updates", "single_slot": false, "stories": [] },
+    { "section_name": "Around IBM", "single_slot": false, "stories": [
+        { "story_id": "S005", "final_title": "IBM Week of Impact is coming — here's how to get involved", "final_abstract": "IBM Week of Impact kicks off next month. Find volunteering opportunities near you, sign up for virtual events, and make a difference in your community.", "final_cta": "Find opportunities", "source_type": "w3", "suggested_category": "Around IBM", "editorial_score": 3, "forced_hero": false, "requires_image": true, "image_url": null, "image_status": "needs manual sourcing", "flags": [], "order": 1 }
+    ]},
+    { "section_name": "Just for #fun", "single_slot": false, "stories": [
+        { "story_id": "S007", "final_title": "18 across: maker of the world's largest quantum computer?", "final_abstract": "This week's fun fact: IBM holds the record for the world's largest quantum computer. How many qubits? Find out inside.", "final_cta": "Get the answer", "source_type": "other", "suggested_category": "Just for #fun", "editorial_score": 2, "forced_hero": false, "requires_image": false, "image_url": null, "image_status": "not found", "flags": [], "order": 1 }
+    ]}
   ]
 };
 
-const SKIPPED = [
-  { story_id: "S006", final_title: "Q2 internal operations update", reason: "approved: false — abstract too vague" }
-];
+let sections = DRAFT_DATA.sections.map(s => ({ ...s, stories: s.stories.map(st => ({ ...st })) }));
+let isLocked = false, draggingStoryId = null, draggingFromSection = null;
 
-let sections = DRAFT.sections.map(s => ({ ...s, stories: s.stories.map(st => ({ ...st })) }));
-let locked = false;
-let dragSrc = null;
+function imgStatusClass(s) { return s === 'found' ? 'found' : s === 'needs manual sourcing' ? 'sourcing' : 'missing'; }
+function imgLabel(s) { return s === 'found' ? 'Image ready' : s === 'needs manual sourcing' ? 'Image needed' : 'No image'; }
+function truncate(t, n) { return !t ? '' : t.length <= n ? t : t.slice(0, n).trimEnd() + '…'; }
 
-function render() {
-  const main = document.getElementById('main');
-  main.innerHTML = '';
-  sections.forEach((sec, sIdx) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'newsletter-section';
-    wrap.innerHTML = `
-      <div class="section-header">
-        <h2>${sec.section_name}</h2>
-        <span class="section-badge ${sec.single_slot ? 'badge-single' : 'badge-multi'}">${sec.single_slot ? 'Single slot' : 'Multi-story'}</span>
-        <span class="story-count">${sec.stories.length} stor${sec.stories.length !== 1 ? 'ies' : 'y'}</span>
-      </div>`;
-    const dz = document.createElement('div');
-    dz.className = 'drop-zone' + (sec.stories.length === 0 ? ' empty' : '');
-    dz.dataset.section = sIdx;
-    if (sec.stories.length === 0) dz.textContent = 'Drag a story here';
-    sec.stories.forEach((story, stIdx) => dz.appendChild(buildCard(story, sIdx, stIdx)));
-    wrap.appendChild(dz);
-    main.appendChild(wrap);
-  });
-  renderSkipped();
-  validate();
-}
-
-function buildCard(story, sIdx, stIdx) {
-  const card = document.createElement('div');
-  card.className = 'story-card' + (locked ? ' locked' : '');
-  card.setAttribute('draggable', String(!locked));
-  card.dataset.section = sIdx;
-  card.dataset.story = stIdx;
-  const srcClass = { w3: 'src-w3', blog: 'src-blog', 'press release': 'src-press', other: 'src-other' }[story.source_type] || 'src-other';
-  const imgClass = { found: 'img-found', 'not found': 'img-missing', 'needs manual sourcing': 'img-manual' }[story.image_status] || 'img-missing';
-  const imgTitle = { found: 'Image confirmed', 'not found': 'Image missing', 'needs manual sourcing': 'Needs manual sourcing' }[story.image_status] || '';
-  const abstract = story.final_abstract;
-  const short = abstract.length > 120 ? abstract.slice(0, 120) + '…' : abstract;
-  const needsToggle = abstract.length > 120;
-  const forcedBadge = story.forced_hero ? `<span class="forced-hero-badge">FORCED HERO</span>` : '';
-  card.innerHTML = `
-    <span class="drag-handle" title="Drag to reorder">&#x2630;</span>
+function renderCard(story) {
+  const short = truncate(story.final_abstract, 120);
+  const needsToggle = story.final_abstract && story.final_abstract.length > 120;
+  return `<div class="story-card" draggable="true" data-id="${story.story_id}">
+    <div class="drag-handle"><span></span><span></span><span></span></div>
     <div class="card-body">
       <div class="card-meta">
-        <span class="source-label ${srcClass}">${story.source_type}</span>
-        <span class="score-badge">Score: ${story.editorial_score}</span>
-        <span class="img-dot ${imgClass}" title="${imgTitle}"></span>
-        ${forcedBadge}
+        <span class="source-tag">${story.source_type}</span>
+        <span class="img-dot ${imgStatusClass(story.image_status)}"></span>
+        <span class="img-label">${imgLabel(story.image_status)}</span>
+        <span class="score-chip${story.editorial_score >= 25 ? ' high' : ''}">Score ${story.editorial_score}</span>
+        ${story.forced_hero ? '<span class="forced-badge">&#9888; Force-promoted to Hero</span>' : ''}
+        ${story.flags && story.flags.length ? '<span class="forced-badge" style="background:#fdf6dd;color:#8a3800;border-color:#f1c21b;">&#9888; Editorial flags</span>' : ''}
       </div>
       <div class="card-title">${story.final_title}</div>
       <div class="card-abstract">
-        <span class="abstract-short" id="short-${story.story_id}">${short}</span>
-        <span class="abstract-full" id="full-${story.story_id}">${abstract}</span>
-        ${needsToggle ? `<span class="abstract-toggle" id="toggle-${story.story_id}">Show more</span>` : ''}
+        <span id="short-${story.story_id}">${short}</span>
+        ${needsToggle ? `<span class="abstract-full" id="full-${story.story_id}">${story.final_abstract}</span><button class="toggle-abstract" id="tog-${story.story_id}" data-expanded="false">Show more</button>` : ''}
       </div>
       <span class="card-cta">${story.final_cta}</span>
-    </div>`;
-  if (!locked) {
-    card.addEventListener('dragstart', e => {
-      dragSrc = { sectionIdx: sIdx, storyIdx: stIdx };
-      setTimeout(() => card.classList.add('dragging'), 0);
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    card.addEventListener('dragend', () => { card.classList.remove('dragging'); dragSrc = null; });
-  }
-  if (needsToggle) {
-    setTimeout(() => {
-      const toggle = document.getElementById('toggle-' + story.story_id);
-      if (!toggle) return;
-      toggle.addEventListener('click', () => {
-        const s = document.getElementById('short-' + story.story_id);
-        const f = document.getElementById('full-' + story.story_id);
-        const expanded = f.style.display === 'inline';
-        s.style.display = expanded ? 'inline' : 'none';
-        f.style.display = expanded ? 'none' : 'inline';
-        toggle.textContent = expanded ? 'Show more' : 'Show less';
-      });
-    }, 0);
-  }
-  return card;
+    </div>
+  </div>`;
 }
 
-// Single document-level dragover + drop — fires exactly once per user action
-document.addEventListener('dragover', e => {
-  if (locked) return;
-  e.preventDefault();
-  // highlight the nearest drop-zone
-  document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
-  const dz = e.target.closest('[data-section]');
-  if (dz) dz.closest('.drop-zone, [data-section]').classList && e.target.closest('.drop-zone') && e.target.closest('.drop-zone').classList.add('drag-over');
-});
+function renderSection(sec) {
+  const label = sec.single_slot ? 'Single story' : `${sec.stories.length} stor${sec.stories.length !== 1 ? 'ies' : 'y'}`;
+  const body  = sec.stories.length ? sec.stories.map(renderCard).join('') : `<div class="empty-zone" data-section="${sec.section_name}">Drop a story here</div>`;
+  return `<div class="section-block" data-section="${sec.section_name}">
+    <div class="section-header">
+      <span class="section-name">${sec.section_name}</span>
+      <span class="section-badge ${sec.single_slot ? 'badge-single' : 'badge-multi'}">${label}</span>
+    </div>
+    <div class="story-list" data-section="${sec.section_name}">${body}</div>
+  </div>`;
+}
 
-document.addEventListener('drop', e => {
-  if (locked || !dragSrc) return;
-  e.preventDefault();
-  document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+function render() {
+  document.getElementById('pubDate').textContent = DRAFT_DATA.publication_date;
+  document.getElementById('main').innerHTML = sections.map(renderSection).join('');
+  bindEvents(); validate();
+}
 
-  // Find the nearest card or drop-zone
-  const card = e.target.closest('.story-card');
-  const zone = e.target.closest('.drop-zone');
-
-  let targetSectionIdx, targetStoryIdx;
-  if (card) {
-    targetSectionIdx = parseInt(card.dataset.section, 10);
-    targetStoryIdx   = parseInt(card.dataset.story,   10);
-  } else if (zone) {
-    targetSectionIdx = parseInt(zone.dataset.section, 10);
-    targetStoryIdx   = null;
-  } else {
-    return;
-  }
-
-  const src = dragSrc;
-  dragSrc = null;
-  if (src.sectionIdx === targetSectionIdx && src.storyIdx === targetStoryIdx) return;
-
-  const srcSec = sections[src.sectionIdx];
-  const tgtSec = sections[targetSectionIdx];
-
-  if (tgtSec.single_slot && tgtSec.stories.length >= 1 && src.sectionIdx !== targetSectionIdx) {
-    const occupant = tgtSec.stories[0];
-    const ok = confirm(`"${tgtSec.section_name}" already has a story (${occupant.story_id}: "${occupant.final_title}").\n\nReplace it? The current story will move back to its original section.`);
-    if (!ok) return;
-  }
-
-  const [movedStory] = srcSec.stories.splice(src.storyIdx, 1);
-  if (tgtSec.single_slot && tgtSec.stories.length >= 1 && src.sectionIdx !== targetSectionIdx) {
-    const displaced = tgtSec.stories.splice(0, 1)[0];
-    const returnSec = sections.find(s => s.section_name === displaced.suggested_category)
-                   || sections.find(s => s.section_name === 'In the News');
-    returnSec.stories.push(displaced);
-  }
-  if (targetStoryIdx === null || targetStoryIdx >= tgtSec.stories.length) {
-    tgtSec.stories.push(movedStory);
-  } else {
-    tgtSec.stories.splice(targetStoryIdx, 0, movedStory);
-  }
-  console.log('sections after drop:', sections.map(s => s.section_name + ': ' + s.stories.map(st => st.story_id).join(',')));
-  render();
-});
-
-function validate() {
-  const warnings = [];
-  let blocking = false;
-  const heroSec = sections.find(s => s.section_name === 'Hero');
-  const ceoSec  = sections.find(s => s.section_name === 'CEO');
-  if (!heroSec || heroSec.stories.length === 0) { warnings.push({ level: 'red', text: 'Hero slot is empty — required' }); blocking = true; }
-  if (!ceoSec  || ceoSec.stories.length === 0)  { warnings.push({ level: 'red', text: 'CEO slot is empty — required' });  blocking = true; }
-  ['Hero','CEO','Around IBM','Just for #fun'].forEach(name => {
-    const sec = sections.find(s => s.section_name === name);
-    if (sec) sec.stories.forEach(st => {
-      if (st.requires_image && st.image_status !== 'found')
-        warnings.push({ level: 'red', text: name + ' — ' + st.story_id + ' needs image (' + st.image_status + ')' });
+function bindEvents() {
+  document.querySelectorAll('.toggle-abstract').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.id.replace('tog-', ''), exp = btn.dataset.expanded === 'true';
+      document.getElementById('short-' + id).style.display = exp ? 'inline' : 'none';
+      document.getElementById('full-'  + id).style.display = exp ? 'none'   : 'inline';
+      btn.textContent = exp ? 'Show more' : 'Show less';
+      btn.dataset.expanded = String(!exp);
     });
   });
-  if (heroSec && heroSec.stories.some(s => s.forced_hero))
-    warnings.push({ level: 'amber', text: 'Forced Hero promotion active (score below 25 threshold)' });
-  sections.forEach(sec => sec.stories.forEach(st => {
-    if (st.image_status === 'needs manual sourcing')
-      warnings.push({ level: 'amber', text: st.story_id + ' — image needs manual sourcing' });
-  }));
-  if (warnings.length === 0) warnings.push({ level: 'green', text: 'All checks passed — ready to lock' });
-  document.getElementById('val-summary').innerHTML = warnings.map(w =>
-    `<span class="val-item"><span class="val-dot-${w.level}"></span><span>${w.text}</span></span>`
-  ).join('');
-  const lockBtn = document.getElementById('lock-btn');
-  lockBtn.disabled = blocking || locked;
+  if (isLocked) return;
+  document.querySelectorAll('.story-card').forEach(card => {
+    card.addEventListener('dragstart', e => {
+      draggingStoryId = card.dataset.id;
+      draggingFromSection = card.closest('[data-section]').dataset.section;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      document.querySelectorAll('.drag-over, .drag-target').forEach(el => el.classList.remove('drag-over', 'drag-target'));
+    });
+  });
+  document.querySelectorAll('.story-list, .empty-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+      zone.classList.add('drag-over');
+      const t = getDropTarget(zone, e.clientY);
+      document.querySelectorAll('.drag-target').forEach(el => el.classList.remove('drag-target'));
+      if (t) t.classList.add('drag-target');
+    });
+    zone.addEventListener('dragleave', e => { if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      moveStory(draggingStoryId, draggingFromSection, zone.dataset.section, getDropTarget(zone, e.clientY)?.dataset.id || null);
+    });
+  });
 }
 
-document.getElementById('lock-btn').addEventListener('click', () => {
-  if (locked) return;
-  locked = true;
-  const finalDraft = {
-    publication_date: DRAFT.publication_date,
-    headline: DRAFT.headline,
-    ceo_slot_empty: sections.find(s => s.section_name === 'CEO').stories.length === 0,
-    skipped_stories: DRAFT.skipped_stories,
-    sections: sections.map(sec => ({
-      section_name: sec.section_name,
-      single_slot: sec.single_slot,
-      stories: sec.stories.map((st, i) => ({ ...st, order: i + 1 }))
-    }))
-  };
-  try { window.parent.postMessage({ type: 'NEWSLETTER_LOCKED', payload: finalDraft }, '*'); } catch(e) {}
-  document.getElementById('output-json').textContent = JSON.stringify(finalDraft, null, 2);
-  document.getElementById('bob-output').style.display = 'block';
-  document.getElementById('lock-btn').style.display = 'none';
-  document.getElementById('lock-confirm').style.display = 'inline';
-  document.getElementById('unlock-btn').style.display = 'inline-block';
-  render();
-  validate();
+function getDropTarget(zone, y) {
+  for (const c of [...zone.querySelectorAll('.story-card:not(.dragging)')]) {
+    const r = c.getBoundingClientRect();
+    if (y < r.top + r.height / 2) return c;
+  }
+  return null;
+}
+
+function findSection(name) { return sections.find(s => s.section_name === name); }
+
+function moveStory(storyId, fromName, toName, beforeId) {
+  if (!storyId) return;
+  const from = findSection(fromName), to = findSection(toName);
+  if (!from || !to) return;
+  const idx = from.stories.findIndex(s => s.story_id === storyId);
+  if (idx === -1) return;
+  const story = from.stories.splice(idx, 1)[0];
+  if (to.single_slot && to.stories.length >= 1 && to.stories[0].story_id !== storyId) {
+    const d = to.stories.splice(0, 1)[0];
+    const fb = findSection(d.suggested_category) || findSection('In the News');
+    fb.stories.push(d); reorder(fb);
+  }
+  if (beforeId) {
+    const bi = to.stories.findIndex(s => s.story_id === beforeId);
+    bi !== -1 ? to.stories.splice(bi, 0, story) : to.stories.push(story);
+  } else { to.stories.push(story); }
+  reorder(to); reorder(from); render();
+}
+
+function reorder(sec) { sec.stories.forEach((s, i) => s.order = i + 1); }
+
+document.getElementById('btnLock').addEventListener('click', () => {
+  if (isLocked) return;
+  isLocked = true;
+  document.body.classList.add('locked');
+  try { window.parent.postMessage({ type: 'NEWSLETTER_LOCKED', payload: buildDraft() }, '*'); } catch(e) {}
+  document.getElementById('btnLock').style.display = 'none';
+  document.getElementById('btnUnlock').style.display = 'inline-block';
+  document.getElementById('lockConfirm').style.display = 'inline';
+  document.getElementById('warningsSummary').innerHTML = '';
 });
 
-document.getElementById('unlock-btn').addEventListener('click', () => {
-  locked = false;
-  document.getElementById('lock-btn').style.display = 'inline-block';
-  document.getElementById('lock-btn').disabled = false;
-  document.getElementById('lock-confirm').style.display = 'none';
-  document.getElementById('unlock-btn').style.display = 'none';
-  document.getElementById('bob-output').style.display = 'none';
+document.getElementById('btnUnlock').addEventListener('click', () => {
+  isLocked = false;
+  document.body.classList.remove('locked');
+  document.getElementById('btnLock').disabled = false;
+  document.getElementById('btnLock').style.display = 'inline-block';
+  document.getElementById('btnUnlock').style.display = 'none';
+  document.getElementById('lockConfirm').style.display = 'none';
   render();
 });
 
-function renderSkipped() {
-  if (!SKIPPED.length) return;
-  document.getElementById('skipped-section').style.display = 'block';
-  document.getElementById('skipped-pills').innerHTML = SKIPPED.map(s =>
-    `<span class="skipped-pill" title="${s.reason}">${s.story_id}: ${s.final_title}</span>`
-  ).join('');
+function buildDraft() {
+  return { publication_date: DRAFT_DATA.publication_date, headline: DRAFT_DATA.headline,
+    sections: sections.map(sec => ({ section_name: sec.section_name,
+      stories: sec.stories.map((s, i) => ({ story_id: s.story_id, final_title: s.final_title,
+        final_abstract: s.final_abstract, final_cta: s.final_cta, image: s.image_url || 'none', order: i + 1 })) })) };
+}
+
+function validate() {
+  const hero = findSection('Hero'), ceo = findSection('CEO');
+  const warns = [];
+  if (!hero || !hero.stories.length) warns.push({ level: 'red',   msg: 'Hero slot is empty' });
+  if (!ceo  || !ceo.stories.length)  warns.push({ level: 'red',   msg: 'CEO slot is empty'  });
+  sections.forEach(sec => sec.stories.forEach(s => {
+    if (s.forced_hero) warns.push({ level: 'amber', msg: `"${s.final_title.slice(0,40)}&#8230;" force-promoted to Hero (score ${s.editorial_score})` });
+    if (s.flags && s.flags.length) warns.push({ level: 'amber', msg: `Unresolved flags: "${s.final_title.slice(0,35)}&#8230;"` });
+  }));
+  ['Hero','CEO','Around IBM','Just for #fun'].forEach(n => {
+    const sec = findSection(n);
+    if (sec) sec.stories.forEach(s => {
+      if (s.requires_image && s.image_status !== 'found') warns.push({ level: 'amber', msg: `Missing image: "${s.final_title.slice(0,35)}&#8230;"` });
+    });
+  });
+  document.getElementById('btnLock').disabled = warns.some(w => w.level === 'red') || isLocked;
+  document.getElementById('warningsSummary').innerHTML = !warns.length
+    ? '<span class="warn-chip green">&#10003; Draft looks good — ready to lock</span>'
+    : warns.map(w => `<span class="warn-chip ${w.level}">${w.msg}</span>`).join('');
 }
 
 render();
