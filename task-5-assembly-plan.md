@@ -1,7 +1,7 @@
 # Task 5 — Newsletter Assembly and Story Ordering
 ## Plan
 
-**Status:** [ ] pending  
+**Status:** [x] done
 **Last updated:** June 2025
 
 ---

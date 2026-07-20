@@ -272,7 +272,7 @@ Output — Assembled Newsletter Draft:
     ]
   }
 
-Status: [ ] pending
+Status: [x] done — see index.html (GitHub Pages), task-5-subtask-1-auto-placement-prompt.md, task-5-bob-paste-block.md, task-5-assembly-plan.md
 
 
 TASK 6 — SUBJECT LINE GENERATOR
@@ -309,7 +309,7 @@ Output — Subject Line Options:
     "recommended": 1
   }
 
-Status: [ ] pending
+Status: [x] done — see task-6-subject-line-prompt.md, task-6-bob-paste-block.md
 
 
 HANDOFF CHAIN
