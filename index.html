@@ -120,11 +120,16 @@
 
   .card-title { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 4px; line-height: 1.4; }
   .card-abstract { font-size: 13px; color: #525252; line-height: 1.55; margin-bottom: 6px; }
-  .abstract-full { display: none; }
-  .toggle-abstract { background: none; border: none; color: #0f62fe; font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline; }
-  .toggle-abstract:hover { color: #0043ce; }
-
-  .card-cta { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; background: #0f62fe; color: #ffffff; letter-spacing: 0.02em; }
+  .card-cta-wrap { display: inline-block; }
+  .card-cta { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 12px; background: #0f62fe; color: #ffffff; letter-spacing: 0.02em; min-width: 20px; }
+  /* Inline editing */
+  [contenteditable] { outline: none; border-radius: 2px; cursor: text; }
+  [contenteditable]:hover { background: #f0f4ff; }
+  [contenteditable]:focus { background: #edf5ff; box-shadow: inset 0 0 0 1px #0f62fe; padding: 1px 4px; margin: -1px -4px; }
+  .edit-hint { display: none; font-size: 10px; color: #a8a8a8; margin-left: 6px; font-style: italic; }
+  .story-card:hover .edit-hint { display: inline; }
+  body.locked [contenteditable] { cursor: default; pointer-events: none; }
+  body.locked [contenteditable]:hover { background: none; }
 
   /* ── Locked ──────────────────────────────────────────────── */
   body.locked .story-card  { cursor: default; }
@@ -248,8 +253,6 @@ function imgLabel(s) {
 function truncate(t, n) { return !t ? '' : t.length <= n ? t : t.slice(0, n).trimEnd() + '…'; }
 
 function renderCard(story) {
-  const short = truncate(story.final_abstract, 120);
-  const needsToggle = story.final_abstract && story.final_abstract.length > 120;
   return `<div class="story-card" draggable="true" data-id="${story.story_id}">
     <div class="drag-handle"><span></span><span></span><span></span></div>
     <div class="card-body">
@@ -260,15 +263,31 @@ function renderCard(story) {
         <span class="score-chip${story.editorial_score >= 25 ? ' high' : ''}">Score ${story.editorial_score}</span>
         ${story.forced_hero ? '<span class="forced-badge">&#9888; Force-promoted to Hero</span>' : ''}
         ${story.flags && story.flags.length ? '<span class="forced-badge" style="background:#fdf6dd;color:#8a3800;border-color:#f1c21b;">&#9888; Editorial flags</span>' : ''}
+        <span class="edit-hint">Click any field to edit</span>
       </div>
-      <div class="card-title">${story.final_title}</div>
-      <div class="card-abstract">
-        <span id="short-${story.story_id}">${short}</span>
-        ${needsToggle ? `<span class="abstract-full" id="full-${story.story_id}">${story.final_abstract}</span><button class="toggle-abstract" id="tog-${story.story_id}" data-expanded="false">Show more</button>` : ''}
+      <div class="card-title"
+        contenteditable="true"
+        data-id="${story.story_id}"
+        data-field="final_title"
+        title="Click to edit headline">${escHtml(story.final_title)}</div>
+      <div class="card-abstract"
+        contenteditable="true"
+        data-id="${story.story_id}"
+        data-field="final_abstract"
+        title="Click to edit abstract">${escHtml(story.final_abstract)}</div>
+      <div class="card-cta-wrap">
+        <span class="card-cta"
+          contenteditable="true"
+          data-id="${story.story_id}"
+          data-field="final_cta"
+          title="Click to edit CTA">${escHtml(story.final_cta)}</span>
       </div>
-      <span class="card-cta">${story.final_cta}</span>
     </div>
   </div>`;
+}
+
+function escHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function renderSection(sec) {
@@ -290,15 +309,29 @@ function render() {
 }
 
 function bindEvents() {
-  document.querySelectorAll('.toggle-abstract').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.id.replace('tog-', ''), exp = btn.dataset.expanded === 'true';
-      document.getElementById('short-' + id).style.display = exp ? 'inline' : 'none';
-      document.getElementById('full-'  + id).style.display = exp ? 'none'   : 'inline';
-      btn.textContent = exp ? 'Show more' : 'Show less';
-      btn.dataset.expanded = String(!exp);
+  // Inline editing — save to data model on blur, prevent drag while editing
+  document.querySelectorAll('[contenteditable]').forEach(el => {
+    el.addEventListener('focus', () => {
+      el.closest('.story-card').setAttribute('draggable', 'false');
     });
+    el.addEventListener('blur', () => {
+      const storyId = el.dataset.id;
+      const field   = el.dataset.field;
+      const value   = el.innerText.trim();
+      // Write back to state
+      sections.forEach(sec => sec.stories.forEach(s => {
+        if (s.story_id === storyId) s[field] = value;
+      }));
+      el.closest('.story-card').setAttribute('draggable', 'true');
+    });
+    // Prevent Enter key from inserting a newline — save instead
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+    });
+    // Prevent drag starting when clicking to edit
+    el.addEventListener('mousedown', e => e.stopPropagation());
   });
+
   if (isLocked) return;
   document.querySelectorAll('.story-card').forEach(card => {
     card.addEventListener('dragstart', e => {
