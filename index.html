@@ -319,12 +319,19 @@ function moveStory(storyId, fromName, toName, beforeId) {
   if (!from || !to) return;
   const idx = from.stories.findIndex(s => s.story_id === storyId);
   if (idx === -1) return;
-  const story = from.stories.splice(idx, 1)[0];
-  if (to.single_slot && to.stories.length >= 1 && to.stories[0].story_id !== storyId) {
-    const d = to.stories.splice(0, 1)[0];
-    const fb = findSection(d.suggested_category) || findSection('In the News');
-    fb.stories.push(d); reorder(fb);
+
+  // Displacement check BEFORE splicing, and only when moving to a different section.
+  // Counts occupants that aren't the dragged story to avoid self-displacement.
+  if (to.single_slot && fromName !== toName) {
+    const occupants = to.stories.filter(s => s.story_id !== storyId);
+    if (occupants.length >= 1) {
+      const d = to.stories.splice(0, 1)[0];
+      const fb = findSection(d.suggested_category) || findSection('In the News');
+      fb.stories.push(d); reorder(fb);
+    }
   }
+
+  const story = from.stories.splice(idx, 1)[0];
   if (beforeId) {
     const bi = to.stories.findIndex(s => s.story_id === beforeId);
     bi !== -1 ? to.stories.splice(bi, 0, story) : to.stories.push(story);
